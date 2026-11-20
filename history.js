@@ -1,4 +1,4 @@
-import {$, $$, escape, progress, renderQuestion, save, shuffle, state} from './core.js?v=2';
+import {$, $$, escape, progress, renderQuestion, save, shuffle, state} from './core.js?v=3';
 import {historyGames, historySources, moods, workshopArt} from './data/history.js';
 
 const art = (name, cls = '') =>
@@ -7,7 +7,7 @@ const menu = '<a class="button secondary" href="#4/games">Все игры</a>';
 
 export function historyCards() {
   return `<div class="grid three history-grid">
-    <a class="card game-card history-card" href="#4/games/queen"><span class="game-icon" aria-hidden="true">👑</span>
+    <a class="card game-card history-card" href="#4/warmup"><span class="game-icon" aria-hidden="true">👑</span>
       <h3 lang="en">Which Queen Elizabeth Are You Today?</h3><p>Выбери настроение и расскажи, как прошёл твой день.</p></a>
     ${historyGames.map(game => `<a class="card game-card history-card" href="#4/games/${game.id}">
       <span class="game-icon" aria-hidden="true">${game.icon}</span><h3 lang="en">${escape(game.title)}</h3>
@@ -16,7 +16,7 @@ export function historyCards() {
 }
 
 export function renderQueen(root) {
-  root.innerHTML = `<header class="game-header"><h1 lang="en">Which Queen Elizabeth Are You Today?</h1>${menu}</header>
+  root.innerHTML = `<header class="game-header"><h1 lang="en">Which Queen Elizabeth Are You Today?</h1></header>
     <p class="page-intro muted">Выбери одну из четырёх иллюстраций. Ответь вслух или запиши свои мысли по-английски.</p>
     <div class="mood-grid">${moods.map(m => `<button class="mood-card" type="button" data-mood="${m.id}" aria-pressed="false">
       <img src="assets/images/${m.image}.webp" alt="" width="768" height="512">
@@ -35,7 +35,7 @@ export function renderQueen(root) {
       <ol lang="en"><li>How are you today?</li><li>Why do you feel like this?</li><li>What happened yesterday?</li></ol>
       <p lang="en"><b>${mood.cue}</b> Yesterday, I went to … / I made … / I saw …</p>
       <label class="input-label">Мой ответ, если хочу записать<textarea class="mood-answer" lang="en"></textarea></label>
-      <div class="row"><button class="button finish-mood" type="button">Я ответил</button><a class="button secondary after-mood" href="#4/vocabulary" ${progress.history.queen?.finished?'':'hidden'}>Перейти к словам</a></div><span class="mood-result" role="status"></span>
+      <div class="row"><button class="button finish-mood" type="button">Я ответил</button></div><span class="mood-result" role="status"></span>
       </div>`;
     const answer = $('.mood-answer', panel);
     answer.value = progress.drafts['history-mood'] || '';
@@ -46,7 +46,6 @@ export function renderQueen(root) {
         save();
       }
       $('.mood-result', panel).textContent = 'Разминка пройдена.';
-      $('.after-mood', panel).hidden = false;
     };
   };
   $$('[data-mood]', root).forEach(button => {

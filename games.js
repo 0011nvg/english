@@ -1,20 +1,27 @@
 import {vocabulary,grammar,gameModes,processSteps} from './data/unit4.js';
-import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,toast} from './core.js?v=2';
+import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,toast} from './core.js?v=3';
 let timer=null,delayed=null;
 export function stopGame(){clearInterval(timer);clearTimeout(delayed);timer=null}
+export const vocabularyModes=[
+ ['translate','Выбери перевод','Найди русский перевод английского слова','◈'],
+ ['tf','Верно или неверно?','Проверь пару «слово — перевод»','✓'],
+ ['spell','Напиши слово','Вспомни английское слово и набери его','✎'],
+ ['match','Найди пары','Соедини английские слова и их переводы','▦']
+];
 const choice=(w,prompt,answer,options)=>({id:w.id,prompt,answer,options,type:'choice',explain:`${w.en} — ${w.ru}.`});
 function wordQuestion(w,mode){
  const others=shuffle(vocabulary.filter(x=>x.id!==w.id)).slice(0,3);
+ if(mode==='spell')return {id:w.id,type:'input',prompt:`Напиши по-английски: ${w.ru}`,answer:w.en,explain:`${w.en} /${w.ipa}/ — ${w.ru}. ${w.example}`};
  if(mode==='missing'){const chars=[...w.en].map((c,i)=>i%2&&/[a-z]/.test(c)?'_':c).join('');return {id:w.id,type:'input',prompt:`Восстанови слово: ${chars} · ${w.ru}`,answer:w.en,explain:w.example,hint:'Впиши слово целиком.'}}
  if(mode==='builder')return {id:w.id,type:'order',prompt:`Собери слово: ${w.ru}`,answer:w.en,tokens:[...w.en],joiner:'',explain:w.example};
- if(mode==='tf'){const right=Math.random()>.5;const translation=right?w.ru:others[0].ru;return choice(w,`${w.en} — ${translation}. Верно?`,right?'True':'False',['True','False'])}
+ if(mode==='tf'){const right=Math.random()>.5;const translation=right?w.ru:others[0].ru;return choice(w,`${w.en} — ${translation}. Верно?`,right?'Верно':'Неверно',['Верно','Неверно'])}
  if(mode==='listen')return choice(w,'Послушай слово и выбери его написание.',w.en,shuffle([w.en,...others.map(x=>x.en)]));
  return choice(w,`Как переводится ${w.en}?`,w.ru,shuffle([w.ru,...others.map(x=>x.ru)]));
 }
-export function renderGame(root,mode,onBack,{reviewOnly=false}={}){
- stopGame();const info=gameModes.find(g=>g[0]===mode);let difficulty='calm';
+export function renderGame(root,mode,onBack,{reviewOnly=false,vocabularyMode=false,backLabel='Все игры'}={}){
+ stopGame();const info=(vocabularyMode?vocabularyModes:gameModes).find(g=>g[0]===mode);let difficulty='calm';
  const start=()=>{
-  stopGame();root.innerHTML=`<div class="game-header"><div><span class="section-label">PLAY & LEARN</span><h2>${escape(info[1])}</h2></div><button class="button secondary exit">Все игры</button></div><div class="row"><label class="small">Уровень <select class="difficulty"><option value="calm">Спокойно · 6 заданий</option><option value="brave">Смелее · 10 заданий</option></select></label><span class="score-pill">0 баллов</span></div><div class="game-body"></div>`;
+  stopGame();root.innerHTML=`<div class="game-header"><div><span class="section-label">PLAY & LEARN</span><h2>${escape(info[1])}</h2></div><button class="button secondary exit">${escape(backLabel)}</button></div><div class="row"><label class="small">Уровень <select class="difficulty"><option value="calm">Спокойно · 6 заданий</option><option value="brave">Смелее · 10 заданий</option></select></label><span class="score-pill">0 баллов</span></div><div class="game-body"></div>`;
   $('.exit',root).onclick=()=>{stopGame();onBack()};$('.difficulty',root).value=difficulty;$('.difficulty',root).onchange=e=>{difficulty=e.target.value;start()};
   let candidates=vocabulary;if(reviewOnly){candidates=vocabulary.filter(w=>progress.answers[w.id]&&!progress.answers[w.id].lastCorrect);if(!candidates.length){$('.game-body',root).innerHTML='<div class="card"><h3>Сейчас нет слов с ошибками</h3><p>Выполняй задания — слова для повторения появятся здесь.</p></div>';return}}
   const n=difficulty==='calm'?6:10;const words=shuffle(candidates).slice(0,n);const body=$('.game-body',root);
@@ -36,7 +43,7 @@ export function renderGame(root,mode,onBack,{reviewOnly=false}={}){
    {id:'extra-detective4',prompt:'Твой выбор: You found cold, hard wax in a mould. What happens next?',answer:'Open the mould',options:['Open the mould','Weave the wax','Put it on a loom'],explain:'Когда воск остыл и затвердел, форму можно открыть.'}
   ];
   let index=0,score=0,answered=false,first=true,remaining=60,finished=false;let solvedThis=false;const records=[];const mysteryOpened=new Set();
-  const finish=()=>{if(finished)return;finished=true;stopGame();body.innerHTML=`<div class="card yellow"><span class="section-label">ROUND COMPLETE</span><h2>Ещё одна маленькая победа!</h2><div class="stat">${score} / ${questions.length*10}</div><p>${records.length} из ${questions.length} заданий завершено. Баллы начисляются за верный ответ с первой попытки; исправления сохраняются в прогрессе.</p><div class="row"><button class="button restart">Сыграть ещё</button><button class="button secondary back">Все игры</button></div></div>`;$('.restart',body).onclick=start;$('.back',body).onclick=onBack};
+  const finish=()=>{if(finished)return;finished=true;stopGame();body.innerHTML=`<div class="card yellow"><span class="section-label">ROUND COMPLETE</span><h2>Ещё одна маленькая победа!</h2><div class="stat">${score} / ${questions.length*10}</div><p>${records.length} из ${questions.length} заданий завершено. Баллы начисляются за верный ответ с первой попытки; исправления сохраняются в прогрессе.</p><div class="row"><button class="button restart">Сыграть ещё</button><button class="button secondary back">${escape(backLabel)}</button></div></div>`;$('.restart',body).onclick=start;$('.back',body).onclick=onBack};
   const draw=()=>{
    answered=false;solvedThis=false;first=true;
    body.innerHTML=`<div class="question-meta" style="margin-top:20px"><span>Задание ${index+1} / ${questions.length}</span>${mode==='speed'?`<span class="timer">${difficulty==='brave'?remaining+' сек.':'Без таймера'}</span>`:''}</div>${['race','battle','boss'].includes(mode)?`<div class="race-track"><span class="race-marker" style="margin-left:${index/questions.length*85}%">${mode==='race'?'🚲':mode==='boss'?'🐉':'⭐'}</span></div>`:''}${mode==='maze'?`<div class="maze-board">${Array.from({length:12},(_,i)=>`<div class="maze-cell ${i<index?'visited':i===index?'current':''}">${i<index?'✿':i===index?'🐾':i===questions.length?'⚑':'·'}</div>`).join('')}</div><p class="small">Выбери верный перевод, чтобы открыть следующий участок тропы.</p>`:''}<div class="question-stage"></div><div class="game-next row"><button class="button next-item" disabled>Дальше</button></div>`;

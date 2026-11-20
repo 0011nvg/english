@@ -1,6 +1,5 @@
-import {$, $$, cleanupMedia, escape, progress, quizBank, renderQuestion, save, shuffle, speech, state} from './core.js?v=2';
+import {$, $$, cleanupMedia, escape, progress, quizBank, renderQuestion, save, shuffle, speech, state} from './core.js?v=3';
 import {courseContent} from './data/course.js';
-import {units} from './data/units.js?v=2';
 import {renderReflection, secretMarkup} from './lesson-tools.js';
 
 const lessonLink = (unit, section, label, style = 'secondary') =>
@@ -60,7 +59,7 @@ export function renderCourseUnit(root, unit, section) {
       view.innerHTML = `<section class="hero course-hero">
         <div><span class="section-label">English World 4 · Unit ${unit.id}</span>
         <h1 lang="en">${escape(data.title)}</h1><p class="lead" lang="en">${escape(data.readingTitle)}</p>
-        <div class="row">${lessonLink(unit,'speaking','Начать урок','')}${lessonLink(unit,'reading','Открыть чтение')}</div></div>
+        <div class="row">${lessonLink(unit,'warmup','Начать с разминки','')}${lessonLink(unit,'reading','Открыть чтение')}</div></div>
         <div class="unit-hero-icon" aria-hidden="true">${data.icon}</div>
         </section>
         <div class="home-tiles">
@@ -69,13 +68,6 @@ export function renderCourseUnit(root, unit, section) {
           <a class="home-tile" href="#${unit.id}/reading"><span class="section-label">Чтение</span><b lang="en">${escape(data.readingTitle)}</b><span>Текст и проверка понимания</span></a>
           <a class="home-tile" href="#${unit.id}/games"><span class="section-label">Историческая игра</span><b lang="en">${escape(data.gameTitle)}</b><span>Три раунда</span></a>
         </div>
-        <div class="section-head"><h2>Как устроен урок</h2></div>
-        <div class="card route-strip">${[
-          ['speaking','Warm-up'],['vocabulary','Vocabulary'],['grammar','Grammar'],['reading','Reading'],
-          ['listening','Listening'],['practice','Practice'],['games','History Challenge'],['reflection','Reflection']
-        ].map(([id,label])=>`<a href="#${unit.id}/${id}">${label}</a>`).join('')}</div>
-        <div class="section-head"><h2>Юниты English World 4</h2></div>
-        <div class="unit-map">${units.map(item=>`<a class="unit-number ${item.id===unit.id?'current':''}" href="#${item.id}/learn" ${item.id===unit.id?'aria-current="page"':''}>${item.id}<small lang="en">${escape(item.title)}</small></a>`).join('')}</div>
         <p class="source">Pupil’s Book, pp. ${data.pages} · Grammar Practice Book, pp. ${data.grammarPages} · Dictionary, Unit ${unit.id}</p>`;
     },
     vocabulary() {
@@ -121,13 +113,15 @@ export function renderCourseUnit(root, unit, section) {
       $('.stop-listening',view).onclick=cleanupMedia;
       bank('.course-bank',banks.Reading,'Listening · адаптация');
     },
+    warmup() {
+      view.innerHTML = heading('Warm-up','Вспомни, что ты уже знаешь по теме.')+
+        `<div class="card yellow"><h2 lang="en">What do you already know?</h2>
+        <p lang="en">Look at the title “${escape(data.title)}”. What words do you know about this topic?</p></div>`;
+    },
     speaking() {
       view.innerHTML = heading('Speaking','Скажи ответ вслух, затем задай вопрос преподавателю.')+
-        `<div class="card yellow"><span class="section-label">Warm-up</span><h2 lang="en">What do you already know?</h2>
-        <p lang="en">Look at the title “${escape(data.title)}”. What words do you know about this topic?</p></div>
-        <div class="section-head"><h2>Говорим по теме</h2></div><div class="card">
-        <p class="story-text" lang="en">${escape(data.speak)}</p><details class="speech-support" open>
-        <summary>Начало ответа</summary><p lang="en">${escape(data.support)}</p></details></div><div class="section-footer">${lessonLink(unit,'vocabulary','Перейти к словам')}</div>`;
+        `<div class="card"><p class="story-text" lang="en">${escape(data.speak)}</p><details class="speech-support" open>
+        <summary>Начало ответа</summary><p lang="en">${escape(data.support)}</p></details></div>`;
     },
     practice() {
       const key = `u${unit.id}-writing`;
