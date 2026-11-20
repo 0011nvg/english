@@ -88,5 +88,11 @@ function progressView(root){
 function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $('#unit-select').innerHTML=units.map(u=>`<option value="${u.id}">Unit ${u.id}${u.title?' · '+u.title:' · Скоро'}</option>`).join('');$('#unit-select').onchange=e=>location.hash=`${e.target.value}/learn`;
 function setMode(teacher){state.teacher=teacher;$('#student-mode').classList.toggle('active',!teacher);$('#teacher-mode').classList.toggle('active',teacher);render()}
-$('#student-mode').onclick=()=>setMode(false);$('#teacher-mode').onclick=()=>{if(state.teacher)return;const d=$('#mode-dialog');if(d.showModal)d.showModal();else if(confirm('Открыть режим учителя с доступом к ответам?'))setMode(true)};$('#mode-dialog').addEventListener('close',()=>{if($('#mode-dialog').returnValue==='teacher')setMode(true)});
+$('#student-mode').onclick=()=>setMode(false);
+const teacherDialog=$('#mode-dialog'),teacherCode=$('#teacher-code'),teacherError=$('#teacher-code-error');
+function unlockTeacher(){if(teacherCode.value.trim()==='Кекс'){teacherCode.value='';teacherError.hidden=true;teacherDialog.close();setMode(true)}else{teacherError.hidden=false;teacherCode.focus()}}
+$('#teacher-mode').onclick=()=>{if(state.teacher)return;teacherCode.value='';teacherError.hidden=true;teacherDialog.showModal();teacherCode.focus()};
+$('#teacher-unlock').onclick=unlockTeacher;
+teacherCode.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();unlockTeacher()}});
+teacherDialog.addEventListener('close',()=>{teacherCode.value='';teacherError.hidden=true});
 window.addEventListener('hashchange',()=>{render();window.scrollTo({top:0,behavior:'instant'})});window.addEventListener('pagehide',()=>{releaseRecording();cleanupMedia();stopGame()});render();
