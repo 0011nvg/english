@@ -16,7 +16,7 @@ export const grammar=[
  q('g7','Собери: Когда учитель пришёл, она сказала «Привет».','When the teacher arrived she said hello',null,'Сначала событие с When, затем его результат.','order'),
  q('g8','Исправь глагол: When the boy walked into the room, he fall.','fell',null,'В прошлом: fall → fell. Впиши только исправленный глагол.','input',{hint:'Впиши одно слово.'}),
  q('g9','Собери предложение о дожде.','When it started to rain the children ran inside',null,'start → started, run → ran.','order'),
- q('g10','Переведи: Когда я открыл коробку, я увидел котёнка.','When I opened the box I saw a kitten',null,'open → opened, see → saw.','input',{hint:'When I opened …',accept:['When I opened the box, I saw a kitten.']}),
+ q('g10','Переведи: Когда я открыл коробку, я увидел котёнка.','When I opened the box I saw a kitten',null,'open → opened, see → saw.','input',{hint:'When I opened …',accept:['I saw a kitten when I opened the box.']}),
  q('g11','В коробке что-то есть: There is ___ in the box.','something',['something','anything','nothing'],'Something — что-то: говорим, что предмет есть.'),
  q('g12','Карман пуст: There is ___ in my pocket.','nothing',['everything','nothing','anything'],'Nothing — ничего. После there is не добавляем not.'),
  q('g13','Вопрос: Is there ___ in the bag?','anything',['everything','nothing','anything'],'Anything обычно используется в вопросах.'),
@@ -24,7 +24,7 @@ export const grammar=[
  q('g15','Все вещи убраны: ___ is in the bag.','Everything',['Nothing','Everything','Anything'],'Everything — всё.'),
  q('g16','Пустая полка: There is ___ on the shelf.','nothing',null,'Ничего нет: there is nothing.','input',{hint:'something / anything / nothing / everything'}),
  q('g17','Собери вопрос: Есть ли что-нибудь в твоём кармане?','Is there anything in your pocket',null,'Вопрос: Is there anything …?','order'),
- q('g18','Сделай отрицание: There is something in the box.','There is not anything in the box',null,'There is not anything = There is nothing.','input',{accept:["There isn't anything in the box",'There is nothing in the box']}),
+ q('g18','Сделай отрицание: There is something in the box.','There is not anything in the box',null,'There is not anything = There is nothing.','input',{accept:["There isn't anything in the box",'There is nothing in the box',"There's nothing in the box"]}),
  q('g19','Сделай вопрос: There is something on the desk.','Is there anything on the desk',null,'Для нейтрального вопроса меняем something на anything.','input'),
  q('g20','Исправь: I cannot see nothing.','I cannot see anything',null,'Убираем двойное отрицание.','input',{accept:["I can't see anything",'I can see nothing']}),
  q('g21','Один нож — много … knife →','knives',null,'-fe меняется на -ves.','input'),q('g22','Один лист — много … leaf →','leaves',null,'leaf → leaves.','input'),q('g23','Одна полка — много … shelf →','shelves',null,'shelf → shelves.','input'),q('g24','Один волк — много … wolf →','wolves',null,'wolf → wolves.','input'),q('g25','Один вор — много … thief →','thieves',null,'thief → thieves.','input'),q('g26','Одна половина — две … half →','halves',null,'half → halves.','input')

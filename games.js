@@ -1,5 +1,5 @@
 import {vocabulary,grammar,gameModes,processSteps} from './data/unit4.js';
-import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,toast} from './core.js';
+import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,toast} from './core.js?v=2';
 let timer=null,delayed=null;
 export function stopGame(){clearInterval(timer);clearTimeout(delayed);timer=null}
 const choice=(w,prompt,answer,options)=>({id:w.id,prompt,answer,options,type:'choice',explain:`${w.en} — ${w.ru}.`});

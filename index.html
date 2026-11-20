@@ -1,5 +1,59 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#5556d9"><meta name="description" content="English — интерактивный English World 4. Слова, грамматика, чтение, аудирование и игры."><title>English</title><link rel="stylesheet" href="styles.css"></head>
-<body><a class="skip" href="#content">К заданию</a><header class="topbar"><a class="brand" href="#4/learn"><span class="brand-mark">✦</span> English<span class="brand-sub">your little big world</span></a><div class="header-actions"><span class="local-label">Мой учебный мир</span><div class="mode" role="group" aria-label="Режим работы"><button id="student-mode" class="active">Ученик</button><button id="teacher-mode">Учитель</button></div></div></header>
-<div class="app-shell"><aside class="sidebar"><label class="section-label" for="unit-select">ENGLISH WORLD 4</label><select id="unit-select" aria-label="Выбрать юнит"></select><nav id="nav" aria-label="Разделы юнита"></nav><a class="intro-link" href="intro.html">✦ Урок знакомства</a><div class="sidebar-progress"><span>Твои маленькие победы</span><strong id="side-score">0 / 0</strong><progress id="side-progress" max="100" value="0"></progress><small>Каждое задание — шаг вперёд</small></div></aside><main id="content" tabindex="-1"></main></div>
-<div id="toast" class="toast" role="status" aria-live="polite"></div><dialog id="mode-dialog"><form method="dialog"><span class="section-label">TEACHER SPACE</span><h2>Режим учителя</h2><p>Ответы и методические подсказки доступны только в режиме учителя.</p><label class="input-label" for="teacher-code">Код учителя</label><input id="teacher-code" type="password" autocomplete="off" placeholder="Введите код" required><p id="teacher-code-error" class="feedback bad" hidden role="alert">Неверный код. Попробуйте ещё раз.</p><div class="row"><button value="cancel" class="button secondary">Отмена</button><button type="button" id="teacher-unlock" class="button">Открыть режим учителя</button></div></form></dialog><noscript>Включите JavaScript, чтобы выполнять интерактивные задания.</noscript><script type="module" src="app.js"></script></body></html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#F7F4ED">
+  <meta name="description" content="English · интерактивный курс English World 4. Слова, грамматика, аудирование и исторические игры.">
+  <title>English</title>
+  <link rel="preload" href="assets/fonts/unbounded-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+  <a class="skip" href="#content">К заданию</a>
+  <header class="topbar">
+    <a class="brand" href="#4/learn"><span class="brand-mark" aria-hidden="true">E</span><span><b>English</b><small>English World 4</small></span></a>
+    <nav id="main-nav" class="main-nav" aria-label="Главное меню">
+      <a href="#4/learn" data-hub="learn">Курс</a>
+      <a href="#4/vocabulary" data-hub="vocabulary">Словарь</a>
+      <a href="#4/games" data-hub="games">Игры</a>
+      <a href="#4/progress" data-hub="progress">Мой прогресс</a>
+      <a href="intro.html">Урок знакомства</a>
+    </nav>
+    <div class="header-actions">
+      <button id="menu-toggle" aria-expanded="false" aria-controls="main-nav" type="button">Меню</button>
+      <div class="mode" role="group" aria-label="Режим работы">
+        <button id="student-mode" class="active" aria-pressed="true" type="button">Ученик</button>
+        <button id="teacher-mode" aria-pressed="false" type="button">Учитель</button>
+      </div>
+    </div>
+  </header>
+  <div class="app-shell">
+    <div class="course-bar">
+      <label class="sr-only" for="unit-select">Выбрать юнит</label>
+      <select id="unit-select"></select>
+      <nav id="nav" aria-label="Разделы юнита"></nav>
+    </div>
+    <main id="content" tabindex="-1"></main>
+  </div>
+  <footer class="site-footer"><b>English · English World 4</b><span>Прогресс сохраняется в этом браузере.</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="mode-dialog" aria-labelledby="teacher-dialog-title">
+    <form method="dialog">
+      <h2 id="teacher-dialog-title">Режим учителя</h2>
+      <p>Код показывает ответы и рекомендации в интерфейсе. Это локальный переключатель показа.</p>
+      <label class="input-label" for="teacher-code">Код учителя</label>
+      <input id="teacher-code" type="password" autocomplete="off" required>
+      <p id="teacher-code-error" class="feedback bad" hidden role="alert">Неверный код. Попробуйте ещё раз.</p>
+      <div class="row">
+        <button value="cancel" formnovalidate class="button secondary">Отмена</button>
+        <button type="button" id="teacher-unlock" class="button">Открыть режим учителя</button>
+      </div>
+    </form>
+  </dialog>
+  <noscript>Включите JavaScript, чтобы выполнять интерактивные задания.</noscript>
+  <script type="module" src="app.js?v=2"></script>
+</body>
+</html>
