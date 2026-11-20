@@ -7,11 +7,31 @@ const input = (slug, prompt, answer, explain, accept = [], scene) =>
 const open = (slug, prompt, model, hint, scene) =>
   ({slug, prompt, model, hint, scene, type:'open'});
 
-export const moods = [
-  {id:'happy', word:'Happy', caption:'My tea arrived on time.', cue:'I feel happy because …', image:'queen-happy'},
-  {id:'curious', word:'Curious', caption:'Who hid my biscuits?', cue:'I’m curious about …', image:'queen-curious'},
-  {id:'tired', word:'Tired', caption:'Even queens need a nap.', cue:'I feel tired because …', image:'queen-tired'},
-  {id:'surprised', word:'Surprised', caption:'The crown did WHAT?', cue:'I’m surprised because …', image:'queen-surprised'}
+export const knightScenes = [
+  {
+    id:'potter', title:'The Wobbly Vase', image:'knight-wheel',
+    prompt:'What is the knight making?', options:['A vase','A candle','A basket'],
+    cue:'I can see a ___. When the wheel turned, the knight ___.',
+    ru:['Шаткая ваза. Что делает рыцарь?', 'Ваза · свеча · корзина.', 'Я вижу … Когда круг завертелся, рыцарь …'],
+    example:'I can see a vase. When the wheel turned, the knight held the vase.',
+    exampleRu:'Я вижу вазу. Когда круг завертелся, рыцарь придержал вазу.'
+  },
+  {
+    id:'basket', title:'The Noisy Basket', image:'basket-cat',
+    prompt:'What is in the basket?', options:['A cat','A bowl','A knife'],
+    cue:'I can see a ___. When the knight opened the basket, he saw ___.',
+    ru:['Шумная корзина. Что в корзине?', 'Кот · миска · нож.', 'Я вижу … Когда рыцарь открыл корзину, он увидел …'],
+    example:'I can see a cat. When the knight opened the basket, he saw a cat.',
+    exampleRu:'Я вижу кота. Когда рыцарь открыл корзину, он увидел кота.'
+  },
+  {
+    id:'hat', title:'The King’s New Hat', image:'pot-hat',
+    prompt:'What is on the king’s head?', options:['A pot','A wheel','A candle'],
+    cue:'I can see a ___. When the knight gave the king a pot, the king ___.',
+    ru:['Новая шляпа короля. Что у короля на голове?', 'Горшок · колесо · свеча.', 'Я вижу … Когда рыцарь дал королю горшок, король …'],
+    example:'I can see a pot. When the knight gave the king a pot, the king put it on his head.',
+    exampleRu:'Я вижу горшок. Когда рыцарь дал королю горшок, король надел его на голову.'
+  }
 ];
 
 export const historySources = {
@@ -125,17 +145,6 @@ export const historyGames = [
       choice('hat','Which caption fits the picture?','The king put a pot on his head.',['The king put a basket on the horse.','The king puts a pot on his bed.'],'Pot, head и действие в прошлом описывают сцену.','The knight makes a pot. The king thinks it is the latest fashion.'),
       choice('basket','Which caption fits the noisy basket?','When I looked in the basket, I saw a cat.',['When I looked in the basket, I see a cat.','When I opened a cupboard, I saw a horse.'],'После looked рассказываем о результате тоже в Past Simple: saw.','Forget the crown. Look at the basket.'),
       open('own','What does the king say about his new “hat”?','“My new hat is beautiful. Why does it have a handle?”','Начни с My new hat is … или Is there …?','The king is waiting for your caption.')
-    ]
-  },
-  {
-    id:'royal-workshop', title:'The Royal Workshop', icon:'⚱️', goal:'Назвать материалы и поставить этапы изготовления по порядку',
-    desc:'Сделай горшок и объясни, что мастер делает сначала и в конце.', art:'knight-wheel',
-    intro:'Собери заказ короля. Сначала выбери материал, затем расставь действия по порядку.',
-    ending:'The king asked for a vase. He got a royal hat. The potter asked for a day off.',
-    rounds:[
-      choice('material','You want to make a pot on a wheel. What do you need?','clay',['reeds','wool'],'Горшок на круге делают из глины.','Your order: one vase for the king. No holes, please.'),
-      order('steps','Нажми действия в том порядке, в котором их выполняет гончар.','Shape the clay · Dry the pot · Paint the pot','Сначала форма, потом сушка, в конце роспись.','The potter needs his instruction cards back.', ['Shape the clay','Dry the pot','Paint the pot'],' · '),
-      choice('candle','Finally, we take the cold candle out of the ___.','mould',['loom','wheel'],'Mould — форма. Когда воск остыл, свечу вынимают.','The king wants a candle to see his amazing vase.')
     ]
   },
   {

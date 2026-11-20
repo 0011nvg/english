@@ -1,6 +1,6 @@
-import {$, $$, cleanupMedia, escape, progress, quizBank, renderQuestion, save, shuffle, speech, state} from './core.js?v=3';
+import {$, $$, cleanupMedia, escape, progress, quizBank, renderQuestion, save, shuffle, speech, state} from './core.js?v=4';
 import {courseContent} from './data/course.js';
-import {renderReflection, secretMarkup} from './lesson-tools.js';
+import {renderReflection, secretMarkup} from './lesson-tools.js?v=4';
 
 const lessonLink = (unit, section, label, style = 'secondary') =>
   `<a class="button ${style}" href="#${unit.id}/${section}">${label}</a>`;

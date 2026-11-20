@@ -1,5 +1,5 @@
-import {questionTranslations} from './data/unit4-support.js';
-import {vocabulary,grammar,readings,practice} from './data/unit4.js';
+import {questionTranslations,optionTranslations} from './data/unit4-support.js?v=4';
+import {vocabulary,grammar,readings,practice} from './data/unit4.js?v=4';
 import {listeningQuestions} from './data/audio.js';
 export const $=(s,root=document)=>root.querySelector(s);
 export const $$=(s,root=document)=>[...root.querySelectorAll(s)];
@@ -46,6 +46,14 @@ export function teacherTranslation(label,lines){
  if(!state.teacher||!lines?.length)return '';
  return `<details class="teacher-translation" lang="ru"><summary>${escape(label)}</summary>${lines.map(line=>`<p>${escape(line)}</p>`).join('')}</details>`;
 }
+export function questionTranslation(q){
+ if(!state.teacher)return '';
+ if(q.teacherRu)return teacherTranslation('Перевод для учителя',q.teacherRu);
+ const translation=questionTranslations[q.originalId??q.id];
+ if(!translation)return '';
+ const options=(q.options??[]).filter(option=>optionTranslations[option]).map(option=>`${option} — ${optionTranslations[option]}`);
+ return teacherTranslation('Перевод для учителя',options.length?[translation,options.join(' · ')]:[translation]);
+}
 export function teacherAnswer(q,root){if(!state.teacher)return;const wrap=document.createElement('div');wrap.className='teacher-answer';wrap.innerHTML='<button class="button secondary small">Показать ответ учителю</button><div hidden></div>';const b=$('button',wrap),d=$('div',wrap);b.onclick=()=>{d.hidden=!d.hidden;d.textContent=`Ответ: ${q.answer}. ${q.explain||''}`;b.textContent=d.hidden?'Показать ответ учителю':'Скрыть ответ'};root.appendChild(wrap)}
 export function renderQuestion(root,q,opts={}){
  let checked=false,solved=false,selected=[];
@@ -78,10 +86,9 @@ export function renderQuestion(root,q,opts={}){
  }else{
   box.innerHTML=`<div class="options ${q.options?.length>4?'compact':''}"></div>`;(q.options||[]).forEach(option=>{const b=document.createElement('button');b.className='option';b.textContent=option;b.onclick=()=>{if(solved||checked&&opts.exam)return;const correct=check(option);if(!opts.exam){$$('.option',box).forEach(x=>x.classList.remove('correct','wrong'));b.classList.add(correct?'correct':'wrong')}};$('.options',box).appendChild(b)})
  }
- if(!opts.exam&&state.teacher){
-  const translation=questionTranslations[q.id];
-  if(translation)root.insertAdjacentHTML('beforeend',teacherTranslation('Перевод для учителя',[translation]));
-  teacherAnswer(q,root);
+ if(state.teacher){
+  root.insertAdjacentHTML('beforeend',questionTranslation(q));
+  if(!opts.exam)teacherAnswer(q,root);
  }
 }
 export function audioMarkup(track){return `<article class="card track-card"><div class="audio-name"><span class="audio-icon">♫</span><div><strong>${escape(track.title)}</strong><div class="source">${escape(track.source||'English World 4')} · ${escape(track.file)}</div></div></div><audio controls preload="none" src="assets/audio/${escape(track.file)}" aria-label="${escape(track.title)}"></audio><div class="audio-controls"><label>Скорость <select aria-label="Скорость воспроизведения"><option value="1">1×</option><option value="0.85">0.85×</option><option value="0.7">0.7×</option></select></label><button class="button secondary small repeat-audio">Повторить сначала</button></div><div class="audio-error note" role="status"></div></article>`}

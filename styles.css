@@ -454,3 +454,40 @@ button,input,textarea,select,a {overflow-wrap:anywhere}
   #nav {margin-inline:0}
   .grammar-exercises {padding-left:21px}
 }
+
+.unit-goals h2 {font:800 1rem/1.35 var(--body);letter-spacing:0}
+.unit-goals ul {margin:0;padding-left:21px;display:grid;gap:6px}
+.unit-goals li::marker {color:var(--indigo)}
+.knight-layout {align-items:start}
+.knight-layout > .reading-visual {width:100%}
+.knight-answer {margin-top:15px;border-top:1px solid var(--line);padding-top:14px}
+.knight-answer .input-label {margin-top:16px}
+.knight-status:not(:empty) {margin-top:12px;font-weight:800;color:#167448}
+.grammar-mini {margin:12px 0 24px}
+.grammar-mini .grammar-knight {padding:12px 0 0}
+.grammar-knight .bank {flex-wrap:wrap}
+.reading-mission {margin-top:18px;padding:16px;background:#fff8d8;border-radius:14px;border:1px solid #e9d993}
+.reading-mission h2 {font-size:1rem}
+.reading-mission-question .question-meta {display:none}
+.reading-mission-question .prompt {font-size:1.05rem;margin:0 0 10px}
+.reading-mission .toggle-clue {margin-top:6px}
+.reading-mission .toggle-clue[aria-pressed=true] {background:var(--ink);color:#fff}
+.reading-evidence {background:#ffe765;border-bottom:2px solid #c38a00;border-radius:3px;color:var(--ink);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.reading-evidence .gloss-word {background:transparent}
+.listen-questions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;list-style:none;margin:12px 0 20px;padding:0}
+.listen-questions > li {min-width:0}
+.listen-questions .question-stage {height:100%;margin:0}
+.listen-questions > li:only-child {grid-column:1/-1}
+.extra-tracks {margin-top:20px}
+.extra-tracks summary {font-weight:800;cursor:pointer}
+.extra-tracks[open] .grid {margin-top:16px}
+.speaking-intro,.craft-plan {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:18px;margin:12px 0 18px}
+.speaking-image,.craft-photo {width:100%;object-fit:cover;border-radius:14px;aspect-ratio:3/2}
+.speaking-image {max-height:230px}
+.craft-plan ol {padding-left:22px}
+.craft-plan .speech-support {margin:0}
+.history-card small {display:block;font-weight:800;color:var(--indigo)}
+@media(max-width:640px){
+ .listen-questions,.speaking-intro,.craft-plan {grid-template-columns:1fr}
+ .reading-mission {padding:12px}
+}

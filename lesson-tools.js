@@ -1,16 +1,17 @@
-import {$, $$, escape, progress, renderQuestion, save, shuffle, state} from './core.js?v=3';
+import {$, $$, escape, progress, renderQuestion, save, shuffle, state, teacherTranslation} from './core.js?v=4';
 
 export const secretMarkup = (text, example = '') =>
   `<aside class="card secret"><img src="assets/keks-face.webp" alt="" width="46" height="46" loading="lazy">
     <div><h3>Секретик от Кекса</h3><p>${escape(text)}</p>${example ? `<p lang="en"><b>${escape(example)}</b></p>` : ''}</div>
   </aside>`;
 
-export function renderReflection(root, unit, goals) {
+export function renderReflection(root, unit, goals, goalsRu = []) {
   const key = `reflection-u${unit.id}`;
   const stored = progress.drafts[key] || {};
   root.innerHTML = `<h1 lang="en">Reflection</h1><p class="page-intro muted">Отметь, что уже получается. Скажи или запиши одну фразу по-английски.</p>
     <section class="card"><h2 lang="en">Today I can …</h2>
       <div class="reflection-goals">${goals.map((goal,i)=>`<label><input type="checkbox" value="${i}" ${stored.goals?.includes(i)?'checked':''}><span lang="en">${escape(goal)}</span></label>`).join('')}</div>
+      ${teacherTranslation('Перевод фраз для учителя',goalsRu.length?[...goalsRu,'Сегодня я узнал(а) … / В следующий раз я хочу потренировать …']:[])}
       <label class="input-label">Что получилось или что хочу повторить
         <textarea lang="en" placeholder="Today I learnt … / Next time I want to practise …"></textarea>
       </label>

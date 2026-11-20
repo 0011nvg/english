@@ -1,5 +1,6 @@
-import {vocabulary,grammar,gameModes,processSteps} from './data/unit4.js';
-import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,toast} from './core.js?v=3';
+import {vocabulary,grammar,gameModes,processSteps} from './data/unit4.js?v=4';
+import {processStepsRu} from './data/unit4-support.js?v=4';
+import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,teacherTranslation,toast} from './core.js?v=4';
 let timer=null,delayed=null;
 export function stopGame(){clearInterval(timer);clearTimeout(delayed);timer=null}
 export const vocabularyModes=[
@@ -8,12 +9,12 @@ export const vocabularyModes=[
  ['spell','Напиши слово','Вспомни английское слово и набери его','✎'],
  ['match','Найди пары','Соедини английские слова и их переводы','▦']
 ];
-const choice=(w,prompt,answer,options)=>({id:w.id,prompt,answer,options,type:'choice',explain:`${w.en} — ${w.ru}.`});
+const choice=(w,prompt,answer,options)=>({id:w.id,prompt,answer,options,type:'choice',explain:`${w.en} — ${w.ru}.`,teacherRu:[`${w.en} /${w.ipa}/ — ${w.ru}.`,w.exampleRu]});
 function wordQuestion(w,mode){
  const others=shuffle(vocabulary.filter(x=>x.id!==w.id)).slice(0,3);
- if(mode==='spell')return {id:w.id,type:'input',prompt:`Напиши по-английски: ${w.ru}`,answer:w.en,explain:`${w.en} /${w.ipa}/ — ${w.ru}. ${w.example}`};
- if(mode==='missing'){const chars=[...w.en].map((c,i)=>i%2&&/[a-z]/.test(c)?'_':c).join('');return {id:w.id,type:'input',prompt:`Восстанови слово: ${chars} · ${w.ru}`,answer:w.en,explain:w.example,hint:'Впиши слово целиком.'}}
- if(mode==='builder')return {id:w.id,type:'order',prompt:`Собери слово: ${w.ru}`,answer:w.en,tokens:[...w.en],joiner:'',explain:w.example};
+ if(mode==='spell')return {id:w.id,type:'input',prompt:`Напиши по-английски: ${w.ru}`,answer:w.en,explain:`${w.en} /${w.ipa}/ — ${w.ru}. ${w.example}`,teacherRu:[w.exampleRu]};
+ if(mode==='missing'){const chars=[...w.en].map((c,i)=>i%2&&/[a-z]/.test(c)?'_':c).join('');return {id:w.id,type:'input',prompt:`Восстанови слово: ${chars} · ${w.ru}`,answer:w.en,explain:w.example,teacherRu:[w.exampleRu],hint:'Впиши слово целиком.'}}
+ if(mode==='builder')return {id:w.id,type:'order',prompt:`Собери слово: ${w.ru}`,answer:w.en,tokens:[...w.en],joiner:'',explain:w.example,teacherRu:[w.exampleRu]};
  if(mode==='tf'){const right=Math.random()>.5;const translation=right?w.ru:others[0].ru;return choice(w,`${w.en} — ${translation}. Верно?`,right?'Верно':'Неверно',['Верно','Неверно'])}
  if(mode==='listen')return choice(w,'Послушай слово и выбери его написание.',w.en,shuffle([w.en,...others.map(x=>x.en)]));
  return choice(w,`Как переводится ${w.en}?`,w.ru,shuffle([w.ru,...others.map(x=>x.ru)]));
@@ -25,7 +26,7 @@ export function renderGame(root,mode,onBack,{reviewOnly=false,vocabularyMode=fal
   $('.exit',root).onclick=()=>{stopGame();onBack()};$('.difficulty',root).value=difficulty;$('.difficulty',root).onchange=e=>{difficulty=e.target.value;start()};
   let candidates=vocabulary;if(reviewOnly){candidates=vocabulary.filter(w=>progress.answers[w.id]&&!progress.answers[w.id].lastCorrect);if(!candidates.length){$('.game-body',root).innerHTML='<div class="card"><h3>Сейчас нет слов с ошибками</h3><p>Выполняй задания — слова для повторения появятся здесь.</p></div>';return}}
   const n=difficulty==='calm'?6:10;const words=shuffle(candidates).slice(0,n);const body=$('.game-body',root);
-  if(mode==='flash'){let i=0,flipped=false;const draw=()=>{const w=words[i];body.innerHTML=`<p class="note">Карточка ${i+1} / ${words.length} · Нажми, чтобы перевернуть. Карточки для знакомства; баллы дают задания.</p><button class="word-card"><span class="word-icon">${w.icon}</span><strong>${escape(flipped?w.ru:w.en)}</strong><span>${escape(flipped?w.example:'Нажми, чтобы увидеть перевод')}</span></button><div class="word-controls"><button class="button secondary previous">Предыдущая</button><button class="button pronounce">♫ Произнести</button><button class="button secondary next">Следующая</button></div><p class="note">Озвучивание голосом браузера, если доступен английский голос.</p>`;$('.word-card',body).onclick=()=>{flipped=!flipped;draw()};$('.previous',body).onclick=()=>{i=(i-1+words.length)%words.length;flipped=false;draw()};$('.next',body).onclick=()=>{i=(i+1)%words.length;flipped=false;draw()};$('.pronounce',body).onclick=()=>speech(w.en)};draw();return}
+  if(mode==='flash'){let i=0,flipped=false;const draw=()=>{const w=words[i];body.innerHTML=`<p class="note">Карточка ${i+1} / ${words.length} · Нажми, чтобы перевернуть. Карточки для знакомства; баллы дают задания.</p><button class="word-card"><span class="word-icon">${w.icon}</span><strong>${escape(flipped?w.ru:w.en)}</strong><span>${escape(flipped?w.example:'Нажми, чтобы увидеть перевод')}</span></button>${teacherTranslation('Перевод примера для учителя',[w.example+' — '+w.exampleRu])}<div class="word-controls"><button class="button secondary previous">Предыдущая</button><button class="button pronounce">♫ Произнести</button><button class="button secondary next">Следующая</button></div><p class="note">Озвучивание голосом браузера, если доступен английский голос.</p>`;$('.word-card',body).onclick=()=>{flipped=!flipped;draw()};$('.previous',body).onclick=()=>{i=(i-1+words.length)%words.length;flipped=false;draw()};$('.next',body).onclick=()=>{i=(i+1)%words.length;flipped=false;draw()};$('.pronounce',body).onclick=()=>speech(w.en)};draw();return}
   if(mode==='memory'){renderMemory(body,words.slice(0,4),root,start);return}
   if(mode==='match'){renderMatch(body,words.slice(0,5),root,start);return}
   if(mode==='maze'){renderMaze(body,root,start,difficulty,candidates);return}
@@ -33,28 +34,76 @@ export function renderGame(root,mode,onBack,{reviewOnly=false,vocabularyMode=fal
   if(['battle','boss'].includes(mode))questions=shuffle(grammar).slice(0,n).map(q=>({...q}));
   if(mode==='boss')questions=shuffle([...questions.slice(0,5),...words.slice(0,5).map(w=>wordQuestion(w,'tf'))]);
   if(mode==='mistake')questions=shuffle(grammar.filter(q=>['g8','g18','g19','g20','g21','g22'].includes(q.id)));
-  if(mode==='sentence')questions=words.map(w=>({id:w.id,type:'order',prompt:`Собери предложение со словом ${w.en}.`,answer:w.example.replace(/[.!?]/g,''),explain:w.ru}));
-  if(mode==='puzzle')questions=[{id:'extra-pot-process',type:'order',prompt:'Выстрой этапы изготовления горшка.',answer:processSteps.join(' · '),tokens:processSteps,joiner:' · ',explain:'Сначала подготовка глины, затем форма, сушка и роспись.'},...grammar.filter(q=>q.type==='order')];
+  if(mode==='sentence')questions=words.map(w=>({id:w.id,type:'order',prompt:`Собери предложение со словом ${w.en}.`,answer:w.example.replace(/[.!?]/g,''),explain:w.ru,teacherRu:[w.exampleRu]}));
+  if(mode==='puzzle')questions=[{id:'extra-pot-process',type:'order',prompt:'Выстрой этапы изготовления горшка.',answer:processSteps.join(' · '),tokens:processSteps,joiner:' · ',explain:'Сначала подготовка глины, затем форма, сушка и роспись.',teacherRu:processStepsRu},...grammar.filter(q=>q.type==='order')];
   if(mode==='picture'){const picWords=vocabulary.filter(w=>['bowl','candle','knife','thread','vase','wheel'].includes(w.en));questions=shuffle(picWords).map(w=>choice(w,`Выбери изображение: ${w.en}`,w.icon,shuffle([w,...shuffle(picWords.filter(o=>o.id!==w.id)).slice(0,3)]).map(x=>x.icon)))}
   if(mode==='detective')questions=[
-   {id:'extra-detective1',prompt:'Улика 1: I use clay and a wheel. Who am I?',answer:'a potter',options:['a potter','a weaver','a candle maker'],explain:'Глина и круг нужны гончару.'},
-   {id:'extra-detective2',prompt:'Улика 2: I push wool between threads. What do I use?',answer:'a loom',options:['a mould','a loom','an oven'],explain:'Ткань делают на ткацком станке.'},
-   {id:'extra-detective3',prompt:'Улика 3: The string gets fatter when I dip it many times. What am I making?',answer:'a candle',options:['a candle','a basket','a bowl'],explain:'Слои воска образуют свечу.'},
-   {id:'extra-detective4',prompt:'Твой выбор: You found cold, hard wax in a mould. What happens next?',answer:'Open the mould',options:['Open the mould','Weave the wax','Put it on a loom'],explain:'Когда воск остыл и затвердел, форму можно открыть.'}
+   {id:'extra-detective1',prompt:'Улика 1: I use clay and a wheel. Who am I?',answer:'a potter',options:['a potter','a weaver','a candle maker'],explain:'Глина и круг нужны гончару.',teacherRu:['Я использую глину и гончарный круг. Кто я?','a potter — гончар · a weaver — ткач · a candle maker — мастер по изготовлению свечей']},
+   {id:'extra-detective2',prompt:'Улика 2: I push wool between threads. What do I use?',answer:'a loom',options:['a mould','a loom','an oven'],explain:'Ткань делают на ткацком станке.',teacherRu:['Я продеваю шерсть между нитями. Что я использую?','a mould — форма для отливки · a loom — ткацкий станок · an oven — печь']},
+   {id:'extra-detective3',prompt:'Улика 3: The string gets fatter when I dip it many times. What am I making?',answer:'a candle',options:['a candle','a basket','a bowl'],explain:'Слои воска образуют свечу.',teacherRu:['Бечёвка становится толще, когда я окунаю её несколько раз. Что я делаю?','a candle — свечу · a basket — корзину · a bowl — миску']},
+   {id:'extra-detective4',prompt:'Твой выбор: You found cold, hard wax in a mould. What happens next?',answer:'Open the mould',options:['Open the mould','Weave the wax','Put it on a loom'],explain:'Когда воск остыл и затвердел, форму можно открыть.',teacherRu:['В форме холодный, твёрдый воск. Что делать дальше?','Открыть форму · сплести воск · положить его на ткацкий станок']}
   ];
-  let index=0,score=0,answered=false,first=true,remaining=60,finished=false;let solvedThis=false;const records=[];const mysteryOpened=new Set();
-  const finish=()=>{if(finished)return;finished=true;stopGame();body.innerHTML=`<div class="card yellow"><span class="section-label">ROUND COMPLETE</span><h2>Ещё одна маленькая победа!</h2><div class="stat">${score} / ${questions.length*10}</div><p>${records.length} из ${questions.length} заданий завершено. Баллы начисляются за верный ответ с первой попытки; исправления сохраняются в прогрессе.</p><div class="row"><button class="button restart">Сыграть ещё</button><button class="button secondary back">${escape(backLabel)}</button></div></div>`;$('.restart',body).onclick=start;$('.back',body).onclick=onBack};
-  const draw=()=>{
-   answered=false;solvedThis=false;first=true;
-   body.innerHTML=`<div class="question-meta" style="margin-top:20px"><span>Задание ${index+1} / ${questions.length}</span>${mode==='speed'?`<span class="timer">${difficulty==='brave'?remaining+' сек.':'Без таймера'}</span>`:''}</div>${['race','battle','boss'].includes(mode)?`<div class="race-track"><span class="race-marker" style="margin-left:${index/questions.length*85}%">${mode==='race'?'🚲':mode==='boss'?'🐉':'⭐'}</span></div>`:''}${mode==='maze'?`<div class="maze-board">${Array.from({length:12},(_,i)=>`<div class="maze-cell ${i<index?'visited':i===index?'current':''}">${i<index?'✿':i===index?'🐾':i===questions.length?'⚑':'·'}</div>`).join('')}</div><p class="small">Выбери верный перевод, чтобы открыть следующий участок тропы.</p>`:''}<div class="question-stage"></div><div class="game-next row"><button class="button next-item" disabled>Дальше</button></div>`;
-   const q=questions[index];const stage=$('.question-stage',body);
-   const loadQuestion=()=>{
-    renderQuestion(stage,q,{label:info[1],onAnswer:(correct)=>{if(first){if(correct)score+=10;first=false}if(correct&&!answered){answered=true;solvedThis=true;records.push(q.id);$('.next-item',body).disabled=false;$('.score-pill',root).textContent=`${score} баллов`}}});
-    if(mode==='listen'){const b=document.createElement('button');b.className='button secondary';b.textContent='♫ Послушать слово';b.onclick=()=>speech(words[index].en);stage.insertBefore(b,stage.querySelector('.prompt'));const p=document.createElement('p');p.className='note';p.textContent='Здесь звучит голос браузера. Оригинальные записи учебника — в Listening.';stage.appendChild(p)}
-   };
-   if(mode==='mystery'){stage.innerHTML='<p>Выбери коробку — внутри задание.</p><div class="mystery-grid">'+[0,1,2].map(i=>`<button aria-label="Открыть коробку ${i+1}">🎁</button>`).join('')+'</div>';$$('button',stage).forEach((b,i)=>b.onclick=()=>{mysteryOpened.add(index+'-'+i);const extra=shuffle([...grammar,...words.map(w=>wordQuestion(w,'tf'))])[0];questions[index]=extra;Object.assign(q,extra);loadQuestion()})}else loadQuestion();
-   $('.next-item',body).textContent=index===questions.length-1?'Завершить':'Следующее задание';$('.next-item',body).onclick=()=>{if(!answered)return;index++;if(index===questions.length)finish();else draw()};
-  };draw();
+  let index=0,score=0,remaining=60,finished=false;
+  const frames=new Map();
+  const solved=new Set();
+  const redrawScore=()=>{$('.score-pill',root).textContent=`${score} баллов`};
+  const finish=()=>{
+   if(finished)return;
+   finished=true;
+   stopGame();
+   body.innerHTML=`<div class="card yellow"><h2>Раунд завершён</h2><div class="stat">${score} / ${questions.length*10}</div>
+    <p>${solved.size} из ${questions.length} заданий завершено. Баллы начисляются за верный ответ с первой попытки.</p>
+    <div class="row"><button class="button restart">Сыграть ещё</button><button class="button secondary back">${escape(backLabel)}</button></div></div>`;
+   $('.restart',body).onclick=start;
+   $('.back',body).onclick=onBack;
+  };
+  function makeFrame(step){
+   const frame=document.createElement('section');
+   frame.innerHTML=`<div class="question-meta" style="margin-top:20px"><span>Задание ${step+1} / ${questions.length}</span>
+    ${mode==='speed'?`<span class="timer">${difficulty==='brave'?remaining+' сек.':'Без таймера'}</span>`:''}</div>
+    ${['race','battle','boss'].includes(mode)?`<div class="race-track"><span class="race-marker" style="margin-left:${step/questions.length*85}%">${mode==='race'?'🚲':mode==='boss'?'🐉':'⭐'}</span></div>`:''}
+    <div class="question-stage" tabindex="-1"></div><div class="game-next row">
+     <button class="button secondary prev-item" ${step===0?'disabled':''}>Предыдущее задание</button>
+     <button class="button next-item" disabled>${step+1===questions.length?'Завершить':'Следующее задание'}</button>
+    </div>`;
+   const stage=$('.question-stage',frame);
+   const next=$('.next-item',frame);
+   let first=true;
+   function loadQuestion(q){
+    renderQuestion(stage,q,{label:info[1],onAnswer(correct){
+     if(first&&correct){score+=10;redrawScore()}
+     first=false;
+     if(correct){solved.add(step);next.disabled=false}
+    }});
+    if(mode==='listen'){
+     const button=document.createElement('button');
+     button.className='button secondary';
+     button.textContent='♫ Послушать слово';
+     button.onclick=()=>speech(words[step].en);
+     stage.insertBefore(button,$('.prompt',stage));
+    }
+   }
+   if(mode==='mystery'){
+    stage.innerHTML='<p>Выбери коробку — внутри задание.</p><div class="mystery-grid">'+[1,2,3].map(i=>`<button aria-label="Открыть коробку ${i}">🎁</button>`).join('')+'</div>';
+    $$('button',stage).forEach(button=>button.onclick=()=>loadQuestion(shuffle([...grammar,...words.map(w=>wordQuestion(w,'tf'))])[0]));
+   }else loadQuestion(questions[step]);
+   $('.prev-item',frame).onclick=()=>move(-1);
+   next.onclick=()=>move(1);
+   return frame;
+  }
+  function show(){
+   if(index===questions.length){finish();return}
+   if(!frames.has(index))frames.set(index,makeFrame(index));
+   body.replaceChildren(frames.get(index));
+   const clock=$('.timer',body);
+   if(clock&&difficulty==='brave')clock.textContent=remaining+' сек.';
+  }
+  function move(delta){
+   index+=delta;
+   show();
+   $('.question-stage',body)?.focus({preventScroll:true});
+  }
+  show();
   if(mode==='speed'&&difficulty==='brave'){timer=setInterval(()=>{remaining--;const t=$('.timer',body);if(t)t.textContent=`${remaining} сек.`;if(remaining<=0)finish()},1000)}
  };start()
 }

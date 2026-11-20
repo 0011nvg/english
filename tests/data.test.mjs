@@ -6,10 +6,11 @@ import {vocabulary,grammar,readings,practice,gameModes} from '../data/unit4.js';
 import {tracks,listeningQuestions} from '../data/audio.js';
 import {courseContent} from '../data/course.js';
 import {courseBanks} from '../course.js';
-import {historyGames,historySources,moods,workshopArt} from '../data/history.js';
+import {historyGames,historySources,knightScenes,workshopArt} from '../data/history.js';
 import {normal} from '../core.js';
-import {readingTerms,readingTranslations,playTranslations,speakingSupport} from '../data/unit4-support.js';
+import {readingTerms,readingTranslations,playTranslations,speakingSupport,readingMissions,speakingExtras,audioTitlesRu,questionTranslations} from '../data/unit4-support.js';
 import {playDialogue} from '../data/dialogues.js';
+import {gameTranslations,roundTranslations} from '../data/history-translations.js';
 const bank=[...grammar,...readings.flatMap(r=>r.questions),...practice,...listeningQuestions];
 test('Units 4–12 have a section contract, title and assigned content',()=>{
   assert.deepEqual(units.map(u=>u.id),[4,5,6,7,8,9,10,11,12]);
@@ -51,16 +52,22 @@ test('All authored closed sets have distinct IDs and solvable choices or tiles',
 });
 
 test('Historical illustrations, fact references and game endings exist',async()=>{
-  assert.equal(historyGames.length,12);
-  assert.equal(moods.length,4);
+  assert.equal(historyGames.length,11);
+  assert.ok(!historyGames.some(game=>game.id==='royal-workshop'));
+  assert.equal(knightScenes.length,3);
   assert.equal(new Set(historyGames.map(g=>g.id)).size,historyGames.length);
   for(const game of historyGames){
     assert.ok(game.rounds.length>=3&&game.ending&&game.goal&&workshopArt[game.art],game.id);
+    assert.ok(gameTranslations[game.id].title);
     for(const round of game.rounds){
+      const [scene,prompt,response]=roundTranslations[game.id][round.slug];
+      assert.ok(scene&&prompt&&response,round.id);
+      if(round.type==='choice')assert.equal(response.length,round.options.length,round.id);
+      else assert.equal(typeof response,'string',round.id);
       if(round.source)assert.match(historySources[round.source].url,/^https:\/\//);
     }
   }
-  for(const name of [...Object.keys(workshopArt),...moods.map(m=>m.image)]){
+  for(const name of [...Object.keys(workshopArt),...knightScenes.map(scene=>scene.image)]){
     await access(new URL(`../assets/images/${name}.webp`,import.meta.url));
   }
 });
@@ -71,4 +78,17 @@ test('Reading, dialogue and speaking translations cover each source fragment',()
   assert.equal(speakingSupport.length,6);
   for(const card of speakingSupport)assert.equal(card.model.length,card.ru.length);
   for(const [en,ru,ipa] of readingTerms)assert.ok(en&&ru&&ipa);
+});
+
+test('Reading clues match their own fragments and the main course provides translations',async()=>{
+  for(const reading of readings){
+    assert.equal(readingMissions[reading.id].length,reading.text.length);
+    reading.text.forEach((fragment,i)=>assert.ok(fragment.includes(readingMissions[reading.id][i][2])));
+  }
+  for(const question of bank)assert.ok(questionTranslations[question.id],question.id);
+  for(const track of tracks)assert.ok(audioTitlesRu[track.file],track.file);
+  assert.equal(speakingExtras.length,speakingSupport.length);
+  for(const name of [...speakingExtras.map(card=>card.image),'coil-workbench']){
+    await access(new URL('../assets/images/'+name+'.webp',import.meta.url));
+  }
 });

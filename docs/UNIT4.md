@@ -66,7 +66,7 @@
 
 ## Исторические задания
 
-Разминка с Елизаветой II активирует лексику эмоций и короткий рассказ о вчерашнем дне. Раздел Games содержит 12 новых исторических сценариев. В них отрабатываются названия ремёсел, материалов и инструментов, Past Simple с when, местоимения something / anything / nothing / everything, формы множественного числа и порядок действий. Иллюстрации королевы и сценок созданы для игры. Все девять исходных записей и учебные задания из прежней версии сохранены.
+Разминка A Knight in the Workshop предлагает три сценки: ученик называет предмет и продолжает рассказ с when. Раздел Games содержит 11 исторических сценариев с переходом к предыдущему раунду. В них отрабатываются названия ремёсел, материалов и инструментов, Past Simple с when, местоимения something / anything / nothing / everything, формы множественного числа и порядок действий. Иллюстрации сценок созданы для игры. В режиме учителя доступны переводы сцен, инструкций и вариантов ответа. Все девять исходных записей и учебные задания из прежней версии сохранены.
 
 В History Fact or Fiction? используются [кувшин с лицом из London Museum](https://www.londonmuseum.org.uk/collections/v/object-34047/jug/), [материалы English Heritage о средневековом освещении](https://www.english-heritage.org.uk/siteassets/home/learn/teaching-resources/learning-resources-sections/helmsley-handling-collection-cards_ks2.pdf), [сведения о коронации Елизаветы II](https://www.royal.uk/100-coronation-facts) и [описание гончарной техники в каталоге Met](https://www.metmuseum.org/art/collection/search/468399).
 
