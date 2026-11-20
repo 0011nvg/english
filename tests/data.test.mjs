@@ -10,6 +10,7 @@ import {historyGames,historySources,knightScenes,workshopArt} from '../data/hist
 import {normal} from '../core.js';
 import {readingTerms,readingTranslations,playTranslations,speakingSupport,readingMissions,speakingExtras,audioTitlesRu,questionTranslations} from '../data/unit4-support.js';
 import {playDialogue} from '../data/dialogues.js';
+import {vaseWords,vaseGrammar,vaseClue,vaseEndings,speakingWheel} from '../data/vase-mission.js';
 import {gameTranslations,roundTranslations} from '../data/history-translations.js';
 const bank=[...grammar,...readings.flatMap(r=>r.questions),...practice,...listeningQuestions];
 test('Units 4–12 have a section contract, title and assigned content',()=>{
@@ -91,4 +92,20 @@ test('Reading clues match their own fragments and the main course provides trans
   for(const name of [...speakingExtras.map(card=>card.image),'coil-workbench']){
     await access(new URL('../assets/images/'+name+'.webp',import.meta.url));
   }
+});
+
+test('The short mission has complete vocabulary, grammar, clue and speaking support',()=>{
+  assert.equal(vaseWords.length,6);
+  assert.ok(vaseWords.every(word=>word.length===3&&word.every(Boolean)));
+  assert.equal(vaseGrammar.length,3);
+  for(const question of [...vaseGrammar,vaseClue.question]){
+    assert.ok(question.teacherRu.length);
+    if(question.options)assert.ok(question.options.includes(question.answer));
+    if(question.tokens)assert.equal(question.tokens.join(' '),question.answer);
+  }
+  const text=vaseClue.before+vaseClue.evidence+vaseClue.after;
+  assert.ok(text.includes('next to the door'));
+  assert.equal(new Set(vaseEndings.map(item=>item.id)).size,3);
+  assert.ok(vaseEndings.every(item=>item.line.startsWith('When ')&&item.lineRu));
+  assert.ok(speakingWheel.every(item=>item.cue&&item.teacherRu.length));
 });

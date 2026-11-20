@@ -1,4 +1,4 @@
-import {$, $$, escape, progress, renderQuestion, save, shuffle, state, teacherTranslation} from './core.js?v=4';
+import {$, $$, escape, progress, renderQuestion, save, shuffle, state, teacherTranslation} from './core.js?v=5';
 
 export const secretMarkup = (text, example = '') =>
   `<aside class="card secret"><img src="assets/keks-face.webp" alt="" width="46" height="46" loading="lazy">
@@ -69,7 +69,16 @@ export function renderWheel(root,questions){
     animation.cancel();
     status.textContent=`Выпало задание №${index+1}.`;
     stage.classList.add('question-stage');
-    renderQuestion(stage,question,{label:'Practice'});
+    if(question.type==='speak'){
+      stage.innerHTML=`<h3>Скажи по-английски</h3><p class="prompt" lang="en">${escape(question.prompt)}</p>
+       <p lang="en"><b>${escape(question.cue)}</b></p>
+       ${teacherTranslation('Перевод для учителя',question.teacherRu)}
+       <button class="button secondary wheel-said" type="button">Я ответил вслух</button>`;
+      $('.wheel-said',stage).onclick=event=>{
+        event.currentTarget.disabled=true;
+        status.textContent='Устное задание выполнено. Можно крутить ещё!';
+      };
+    }else renderQuestion(stage,question,{label:'Practice'});
     button.disabled=false;
   };
 }

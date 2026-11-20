@@ -3,13 +3,15 @@ import {vocabulary,grammar,readings,practice,speaking,gameModes,teacherGuide,pro
 import {readingBasics,readingTerms,readingTranslations,playTranslations,stageRoles,audioSupport,speakingSupport,speakingExtras,unitGoals,readingMissions,coilStepsRu,processStepsRu,audioTitlesRu} from './data/unit4-support.js?v=4';
 import {tracks,listeningQuestions} from './data/audio.js';
 import {playDialogue} from './data/dialogues.js';
-import {$,$$,escape,shuffle,state,progress,save,mastered,toast,speech,quizBank,renderQuestion,audioMarkup,bindAudio,cleanupMedia,updateSide,unit4Progress,teacherTranslation,questionTranslation,resetUnit4Progress,storageAvailable} from './core.js?v=4';
-import {renderGame,stopGame,vocabularyModes} from './games.js?v=4';
+import {speakingWheel,vaseMissionKey} from './data/vase-mission.js';
+import {renderVaseMission,vaseMissionEntry} from './vase-mission.js';
+import {$,$$,escape,shuffle,state,progress,save,mastered,toast,speech,quizBank,renderQuestion,audioMarkup,bindAudio,cleanupMedia,updateSide,unit4Progress,teacherTranslation,questionTranslation,resetUnit4Progress,storageAvailable} from './core.js?v=5';
+import {renderGame,stopGame,vocabularyModes} from './games.js?v=5';
 import {historyGames} from './data/history.js?v=4';
-import {historyCards,renderKnightWarmup,renderHistoryGame,historyResultList} from './history.js?v=4';
+import {historyCards,renderKnightWarmup,renderHistoryGame,historyResultList} from './history.js?v=5';
 import {bindTeacherMode} from './teacher.js';
-import {courseBanks,renderCourseUnit} from './course.js?v=4';
-import {renderWheel,secretMarkup,renderReflection} from './lesson-tools.js?v=4';
+import {courseBanks,renderCourseUnit} from './course.js?v=5';
+import {renderWheel,secretMarkup,renderReflection} from './lesson-tools.js?v=5';
 const content=$('#content');let releaseRecording=()=>{};
 const link=(section,text,cls='button')=>`<a class="${cls}" href="#4/${section}">${text}</a>`;
 const figure=(name,alt,cls='reading-visual')=>`<img class="${cls}" src="assets/images/${name}.webp" alt="${escape(alt)}" loading="lazy">`;
@@ -34,15 +36,6 @@ function setHub(active,unit){
   else a.removeAttribute('aria-current');
  });
 }
-function nextStage(unit){
- if(unit.id!==4)return 'warmup';
- if(!progress.history.knightWarmup?.finished)return 'warmup';
- const banks=[
-  ['vocabulary',vocabulary],['grammar',grammar],['reading',readings.flatMap(r=>r.questions)],
-  ['listening',listeningQuestions],['practice',practice]
- ];
- return banks.find(([,items])=>items.some(q=>!progress.answers[q.id]?.mastered))?.[0]??'challenge';
-}
 function unitProgress(unit){
  if(unit.id===4)return unit4Progress();
  const items=Object.values(courseBanks(unit)).flat();
@@ -55,7 +48,7 @@ function courseView(unit){
    <div><span class="section-label">Английский для 4 класса</span>
    <h1 lang="en">English <span class="hl-blue">World 4</span></h1>
    <p class="lead">Начинаем с Unit 4 «Crafts». Узнай, как делают горшки, ткань и свечи, и расскажи об этом по-английски.</p>
-   <div class="row">${sectionLink(units[0],'learn','Открыть Unit 4','button')}${sectionLink(units[0],nextStage(units[0]),progress.history.knightWarmup?.finished?'Продолжить':'Начать с разминки')}</div></div>
+   <div class="row">${vaseMissionEntry()}${sectionLink(units[0],'learn','Открыть Unit 4')}</div></div>
    <figure class="hero-art"><img src="assets/keks.webp" width="720" height="630" alt="Кекс с картой"></figure>
  </section>
  <div class="home-tiles">
@@ -94,12 +87,15 @@ function render(){
  const oldWarmup=unit.id===4&&match?.[2]==='games'&&match[3]==='queen';
  const oldWorkshop=unit.id===4&&match?.[2]==='games'&&match[3]==='royal-workshop';
  const requestedSection=unit.id===requestedUnit?match?.[2]:null;
+ const mission=unit.id===4&&requestedSection==='mission';
  state.unit=unit.id;
- state.section=oldWarmup?'warmup':sections.find(s=>s[0]===requestedSection)?.[0]??'learn';
+ state.section=mission?'mission':oldWarmup?'warmup':sections.find(s=>s[0]===requestedSection)?.[0]??'learn';
  if(oldWarmup||oldWorkshop||(match&&requestedUnit!==unit.id))history.replaceState(null,'',`#${unit.id}/${state.section}`);
  setHub(map?'course':'lesson',unit);
- courseBar.hidden=map;
+ courseBar.hidden=map||mission;
+ $('.lesson-meter').hidden=state.unit===4&&state.section==='learn'&&!state.teacher;
  if(map){courseView(unit);return}
+ if(mission){renderVaseMission(content);return}
 
  const index=sections.findIndex(s=>s[0]===state.section);
  const section=sections[index];
@@ -129,14 +125,13 @@ function render(){
 }
 
 function learnView(root){
- const unit=units[0];
  root.innerHTML=`<section class="lesson-hero">
    <div><span class="section-label">Unit 4 · Pupil’s Book, стр. 48–55</span>
      <h1 lang="en">Crafts</h1>
      <div class="unit-goals" lang="en"><h2>By the end of this unit, I can…</h2>
       <ul>${unitGoals.map(([en])=>`<li>${escape(en)}</li>`).join('')}</ul></div>
      ${teacherTranslation('Перевод целей для учителя',unitGoals.map(([,ru])=>ru))}
-     <div class="row">${sectionLink(unit,nextStage(unit),progress.history.knightWarmup?.finished?'Продолжить урок':'Начать с разминки','button')}</div>
+     <div class="row">${vaseMissionEntry()}<a class="button secondary" href="#4/warmup">Открыть разминку</a></div>
    </div>${figure('hero-pots','Керамические изделия в мастерской','lesson-cover')}
  </section>
  ${state.teacher?'<aside class="teacher-box"><b>Пример занятия на 36 минут</b><p>24 минуты на лексику, грамматику, чтение или аудирование и практику по учебнику. 12 минут на разминку, историческую игру и рефлексию.</p></aside>':''}`;
@@ -265,7 +260,10 @@ function readingView(root){
     <div class="question-controls reading-pager"><button class="button secondary prev-part" ${part===0?'disabled':''}>Предыдущий фрагмент</button>
     <button class="button next-part" ${part===r.text.length-1?'disabled':''}>Следующий фрагмент</button></div>
    </div></div>
-   <div class="section-head"><h2>Проверь понимание</h2></div><div class="reading-check"></div>`;
+   <details class="card reading-extra"><summary>Дополнительная проверка · ${r.questions.length} заданий${r.id==='pots'?' и порядок действий':''}</summary><div class="reading-check"></div></details>`;
+  const extra=$('.reading-extra',area);
+  extra.open=checks.get(r.id)?.open??false;
+  extra.ontoggle=()=>{const data=checks.get(r.id);if(data)data.open=extra.open};
   const storyText=$('.story-text',area);
   const clue=$('.toggle-clue',area);
   const drawText=()=>{
@@ -314,11 +312,10 @@ function readingView(root){
    mission.append(question);
    renderQuestion(question,{
     id:missionKey,type:'choice',prompt,options:shuffle(options),answer:options[0],
-    explain:'Теперь посмотри на выделенную фразу в тексте.',teacherRu:[promptRu,optionsRu,`Улика: ${evidenceRu}`]
+    explain:'Теперь посмотри на выделенную фразу в тексте.',retryHint:'Перечитай выделенную фразу в тексте и попробуй ещё раз.',teacherRu:[promptRu,optionsRu,`Улика: ${evidenceRu}`]
    },{label:'Reading',record:false,onAnswer(correct){
-    if(!correct)return;
-    missions.set(missionKey,question);
     setClue(true);
+    if(correct)missions.set(missionKey,question);
    }});
    drawText();
   }
@@ -335,9 +332,9 @@ function readingView(root){
      teacherRu:processSteps.map((step,i)=>`${step} — ${processStepsRu[i]}`)
     },{label:'Reading'});
    }
-   checks.set(r.id,check);
+   checks.set(r.id,{element:check,open:false});
   }
-  $('.reading-check',area).append(checks.get(r.id));
+  $('.reading-check',area).append(checks.get(r.id).element);
  };
  $$('[data-story]',root).forEach(button=>button.onclick=()=>{readingSelection.story=Number(button.dataset.story);readingSelection.part=0;draw()});
  draw();
@@ -351,6 +348,14 @@ function listeningTranslation(track){
 }
 
 const listeningTracks=tracks.filter(track=>track.questions.length);
+function listeningGroups(track){
+ const list=ids=>`<ol class="listen-questions">${ids.map(id=>`<li><div class="question-stage" data-listening-question="${id}"></div></li>`).join('')}</ol>`;
+ if(track.file!=='u4_42.mp3')return list(track.questions);
+ return [0,3,6,9].map((start,i)=>{
+  const title=i===3?'Собери слово из букв':`Описания ${start+1}–${start+3}`;
+  return `<section class="listen-group"><h2>${title}</h2>${i<3?'<p class="muted small">Поставь запись на паузу после третьего описания в этой группе.</p>':''}${list(track.questions.slice(start,start+3))}</section>`;
+ }).join('');
+}
 let listeningTrack=listeningTracks[0].file;
 function listeningView(root){
  root.innerHTML=heading('Listening','Выбери запись, прочитай вопросы и послушай. Все вопросы к выбранной записи открыты сразу.')+`
@@ -374,7 +379,7 @@ function listeningView(root){
    const frame=document.createElement('section');
    frame.innerHTML=audioMarkup(t)+listeningTranslation(t)
     +(t.image?figure(t.image,'Иллюстрации к аудиозаданию','listening-picture'):'')
-    +`<ol class="listen-questions">${t.questions.map(id=>`<li><div class="question-stage" data-listening-question="${id}"></div></li>`).join('')}</ol>`;
+    +listeningGroups(t);
    bindAudio(frame);
    t.questions.forEach(id=>renderQuestion($('[data-listening-question="'+id+'"]',frame),listeningQuestions.find(q=>q.id===id),{label:'Listening'}));
    frames.set(file,frame);
@@ -409,15 +414,36 @@ function setupRecorder(root){
  releaseRecording=()=>{active=false;if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());if(url)URL.revokeObjectURL(url)};
  $('.record-start',root).onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({audio:true});if(!active){stream.getTracks().forEach(t=>t.stop());return}const chunks=[];recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());if(!active)return;if(url)URL.revokeObjectURL(url);const blob=new Blob(chunks,{type:recorder.mimeType});url=URL.createObjectURL(blob);$('.record-result',root).innerHTML=`<audio class="record-audio" controls src="${url}"></audio><a class="button secondary small" href="${url}" download="my-speaking-answer.${recorder.mimeType.includes('mp4')?'mp4':recorder.mimeType.includes('ogg')?'ogg':'webm'}">Скачать запись</a><p class="note">Запись остаётся на устройстве. Скачай её, чтобы сохранить после ухода со страницы.</p>`;$('.record-start',root).disabled=false;$('.record-stop',root).disabled=true;$('.record-status',root).textContent='Готово — послушай себя.'};recorder.start();$('.record-start',root).disabled=true;$('.record-stop',root).disabled=false;$('.record-status',root).textContent='Идёт запись…';}catch{if(active)toast('Не удалось включить микрофон. Можно ответить вслух.')}};$('.record-stop',root).onclick=()=>{if(recorder?.state==='recording')recorder.stop()}
 }
-function gamesView(root){root.innerHTML=heading('Games','Потренируй английский в замке, в мастерской или в словесной игре.')+`<div class="section-head"><h2>Исторические игры</h2><span class="small muted">Авторские задания · Unit 4</span></div>${historyCards()}<div class="section-head"><h2>Слова и грамматика</h2></div><div class="grid three">${gameModes.map(([id,title,desc,icon],i)=>`<button class="card game-card ${['pink','blue','yellow','lilac'][i%4]}" data-game="${id}"><span class="game-icon">${icon}</span><h3>${title}</h3><p>${desc}</p></button>`).join('')}</div>`;$$('[data-game]',root).forEach(b=>b.onclick=()=>renderGame(root,b.dataset.game,()=>gamesView(root)))}
+const suggestedGames=['detective','meme-lab','royal-battle'];
+let gamesExpanded=false;
+function gamesView(root){
+ root.innerHTML=heading('Games','Выбери игру про ремёсла, рыцарей или английские слова.')+`
+  <div class="section-head"><h2>Три игры для этого урока</h2></div>
+  ${historyCards({ids:suggestedGames})}
+  <details class="card all-games" ${gamesExpanded?'open':''}>
+   <summary>Все игры</summary>
+   <div class="section-head"><h2>Другие исторические игры</h2></div>
+   ${historyCards({ids:historyGames.map(game=>game.id).filter(id=>!suggestedGames.includes(id)),includeWarmup:true})}
+   <div class="section-head"><h2>Слова и грамматика</h2></div>
+   <div class="grid three">${gameModes.map(([id,title,desc,icon],i)=>`<button class="card game-card ${accents[i%accents.length]}" data-game="${id}"><span class="game-icon">${icon}</span><h3>${title}</h3><p>${desc}</p></button>`).join('')}</div>
+  </details>`;
+ const all=$('.all-games',root);
+ all.ontoggle=()=>{gamesExpanded=all.open};
+ $$('[data-game]',root).forEach(b=>b.onclick=()=>renderGame(root,b.dataset.game,()=>{
+  gamesView(root);
+  $('[data-game="'+b.dataset.game+'"]',root)?.focus();
+ }));
+}
 function practiceView(root){
  root.innerHTML=heading('Make it your own','Закрепи слова, произношение и грамматику. Затем опиши, как мастер делает горшок из глиняного жгута.')+
-  `<div class="practice-quiz"></div><div class="section-head"><h2>Колесо заданий</h2></div><div class="practice-wheel"></div><div class="section-head"><h2>My craft story</h2><span class="tag">Письмо · p.55</span></div><div class="writing-grid"><div class="card"><div class="craft-plan"><div>${figure('coil-workbench','Руки мастера укладывают глиняный жгут по краю будущего горшка','craft-photo')}</div>
+  `<h2>Колесо заданий</h2><div class="practice-wheel"></div>
+  <details class="card practice-extra"><summary>Упражнения на повторение · ${practice.length}</summary><div class="practice-quiz"></div></details>
+  <div class="section-head"><h2>My craft story</h2><span class="tag">Письмо · p.55</span></div><div class="writing-grid"><div class="card"><div class="craft-plan"><div>${figure('coil-workbench','Руки мастера укладывают глиняный жгут по краю будущего горшка','craft-photo')}</div>
   <div class="speech-support"><h3>Твой план</h3><ol lang="en">${coilSteps.map(step=>`<li>${escape(step)}</li>`).join('')}</ol>
    <p lang="en">First, the potter … Then, he … Next, he … Finally, he …</p>
    ${teacherTranslation('Перевод плана для учителя',[...coilStepsRu.map((step,i)=>`${i+1}. ${step}`),'Сначала гончар … Потом он … Затем он … В конце он …'])}
   </div></div><label class="input-label">Напиши 5–7 предложений<textarea id="craft-writing" placeholder="First, the potter cuts the clay. …"></textarea></label><p class="writing-saved" role="status"></p><div class="row"><button class="button check-writing">Проверить свой текст по плану</button><button class="button secondary download-writing">Скачать текст</button></div><div class="writing-checklist"></div></div></div>${state.teacher?'<div class="teacher-box"><h3>Образец и критерии</h3><details><summary>Открыть образец</summary><p>First, the potter cuts the clay. Then, he pushes and pulls it into a smooth lump. Next, he rolls a long, thin piece. He coils the clay and makes the shape. He dries the pot slowly. Finally, he paints it.</p><p>Сначала гончар отрезает кусок глины. Затем мнёт и вытягивает её, пока не получится гладкий комок. Потом раскатывает длинный тонкий жгут, сворачивает глину витками и придаёт изделию форму. Горшок медленно сохнет. В конце гончар раскрашивает его.</p></details><p>Содержание и порядок — 0–2; слова юнита — 0–2; ясные предложения — 0–2. Не требуйте буквального совпадения с образцом.</p></div>':''}`;
- quizBank($('.practice-quiz',root),practice,{title:'Practice'});renderWheel($('.practice-wheel',root),practice);const draft=$('#craft-writing',root);draft.value=progress.drafts.craft||'';draft.oninput=()=>{progress.drafts.craft=draft.value;save();$('.writing-saved',root).textContent=storageAvailable()?'Черновик сохранён в этом браузере.':'Черновик доступен до закрытия страницы.'};$('.check-writing',root).onclick=()=>{$('.writing-checklist',root).innerHTML='<div class="hint"><b>Проверь себя</b><p>□ Есть начало с First?<br>□ Этапы идут по порядку?<br>□ Есть слова clay, roll, coil, dry, paint?<br>□ Последний шаг начинается с Finally?<br>□ Каждое предложение начинается с большой буквы?</p><p>Это памятка для самопроверки. Содержание текста проверяет учитель.</p></div>'};$('.download-writing',root).onclick=()=>{if(!draft.value.trim()){toast('Сначала напиши текст.');return}download('my-craft-story.txt',draft.value,'text/plain;charset=utf-8')}
+ quizBank($('.practice-quiz',root),practice,{title:'Practice'});renderWheel($('.practice-wheel',root),[...practice,...speakingWheel]);const draft=$('#craft-writing',root);draft.value=progress.drafts.craft||'';draft.oninput=()=>{progress.drafts.craft=draft.value;save();$('.writing-saved',root).textContent=storageAvailable()?'Черновик сохранён в этом браузере.':'Черновик доступен до закрытия страницы.'};$('.check-writing',root).onclick=()=>{$('.writing-checklist',root).innerHTML='<div class="hint"><b>Проверь себя</b><p>□ Есть начало с First?<br>□ Этапы идут по порядку?<br>□ Есть слова clay, roll, coil, dry, paint?<br>□ Последний шаг начинается с Finally?<br>□ Каждое предложение начинается с большой буквы?</p><p>Это памятка для самопроверки. Содержание текста проверяет учитель.</p></div>'};$('.download-writing',root).onclick=()=>{if(!draft.value.trim()){toast('Сначала напиши текст.');return}download('my-craft-story.txt',draft.value,'text/plain;charset=utf-8')}
 }
 const examQuestions=()=>[...grammar.filter(q=>['g1','g3','g11','g12','g13','g18','g21'].includes(q.id)),...readings.slice(0,3).flatMap(r=>r.questions).filter(q=>['r2','r5','r8'].includes(q.id)),...practice.filter(q=>['p2','p7'].includes(q.id)),...listeningQuestions.filter(q=>['l5','l9','l18'].includes(q.id)).map(q=>({...q,audio:tracks.find(t=>t.questions.includes(q.id)).file})),...vocabulary.filter(w=>['weave','pour','smooth'].includes(w.en)).map(w=>({id:w.id,prompt:`Выбери перевод: ${w.en}`,answer:w.ru,options:shuffle([w.ru,...shuffle(vocabulary.filter(o=>o.id!==w.id)).slice(0,2).map(o=>o.ru)]),explain:w.example,teacherRu:[`${w.en} — ${w.ru}.`,w.exampleRu]}))].map(q=>({...q,id:'c-'+q.id,originalId:q.id}));
 function challengeView(root){
@@ -425,7 +451,8 @@ function challengeView(root){
   cleanupMedia();root.innerHTML=heading('Your little big challenge',`${exam.length} заданий. Ответ фиксируется один раз; разбор откроется после завершения.`)+`<span class="section-label">QUESTION ${index+1} / ${exam.length}</span><progress max="${exam.length}" value="${index}"></progress>${exam[index].audio?audioMarkup(tracks.find(t=>t.file===exam[index].audio)):''}<div class="question-stage"></div><div class="row"><button class="button exam-next" disabled>${index===exam.length-1?'Завершить испытание':'Дальше'}</button><button class="button secondary exit-exam">Выйти из испытания</button></div><p class="note">Незавершённый результат не попадёт в историю испытаний.</p>`;
   bindAudio(root);renderQuestion($('.question-stage',root),exam[index],{exam:true,label:'Challenge',onAnswer:(correct,value)=>{results[index]={id:exam[index].id,correct,value};$('.exam-next',root).disabled=false}});$('.exam-next',root).onclick=()=>{index++;next()};$('.exit-exam',root).onclick=()=>{if(confirm('Выйти? Эта незавершённая попытка не будет сохранена в истории.'))challengeView(root)};
  };next()};
- root.innerHTML=heading('Ready for a little challenge?','Всё, что ты уже изучил: слова, грамматика, чтение, аудирование и звук y. Без таймера и спешки.')+`<div class="card lilac"><span class="section-label">UNIT 4 · FINAL CHECK</span><h2>Ты справишься ✦</h2><p>18 заданий. Примерно 12–15 минут. Здесь нет подсказок; ответы откроются после завершения.</p><button class="button start-exam">Начать испытание</button></div><p class="note">Аудиозадания включены в испытание. Устную речь и письменную работу оценивает преподаватель отдельно.</p>`;$('.start-exam',root).onclick=begin
+ root.innerHTML=heading('Ready for a little challenge?','Всё, что ты уже изучил: слова, грамматика, чтение, аудирование и звук y. Без таймера и спешки.')+`<section class="card yellow challenge-short"><h2>Короткий финал · The Missing Vase</h2><p>Найди улику и расскажи королю, где нашлась ваза.</p>${vaseMissionEntry()}</section>
+ <div class="card lilac"><h2>Полная проверка Unit 4</h2><p>18 заданий. Примерно 12–15 минут. Здесь нет подсказок; ответы откроются после завершения.</p><button class="button start-exam">Начать испытание</button></div><p class="note">Аудиозадания включены в испытание. Устную речь и письменную работу оценивает преподаватель отдельно.</p>`;$('.start-exam',root).onclick=begin
 }
 function badges(){const passed=progress.challenge.some(c=>(!c.unit||c.unit===4)&&c.total&&c.score/c.total>=.8);return [
  ['⭐','Vocabulary Star',mastered('v')>=20,`${mastered('v')} / 20 слов освоено`],['🧩','Grammar Hero',mastered('g')>=18,`${mastered('g')} / 18 заданий`],['📖','Reading Explorer',mastered('r')>=9,`${mastered('r')} / 9 заданий`],['🎧','Listening Master',mastered('l')>=9,`${mastered('l')} / 9 заданий`],['👑','Castle Games Badge',Object.values(progress.history).filter(x=>x?.attempts).length>=4,'Заверши четыре исторические игры'],['🏆','English Champion',passed&&mastered('v')>=20&&mastered('g')>=18&&mastered('r')>=9&&mastered('l')>=9,'Испытание ≥80% и все 4 награды']
@@ -434,7 +461,9 @@ function progressView(root){
  const unitResults=progress.challenge.filter(c=>!c.unit||c.unit===4);const stats=[['Vocabulary',mastered('v'),vocabulary.length],['Grammar',mastered('g'),grammar.length],['Reading',mastered('r'),readings.flatMap(r=>r.questions).length],['Listening',mastered('l'),listeningQuestions.length],['Practice',mastered('p'),practice.length]];const mistakes=vocabulary.filter(w=>progress.answers[w.id]?.lastCorrect===false);
  const reviewBank=[...grammar,...readings.flatMap(r=>r.questions),...listeningQuestions,...practice];
  const mistakesToReview=()=>reviewBank.filter(q=>progress.answers[q.id]?.lastCorrect===false);
- root.innerHTML=heading('Look how far you’ve come','Маленькие шаги тоже считаются. Здесь — выполненные задания и реальные достижения.')+`<div class="grid three">${stats.map(([t,n,d])=>`<div class="card"><span class="section-label">${t}</span><div class="stat">${n}<span class="muted" style="font-size:20px"> / ${d}</span></div><progress max="${d||1}" value="${n}"></progress><p class="note">Освоенные задания</p></div>`).join('')}</div><div class="section-head"><h2>Your little victories</h2></div><div class="grid three">${badges().map(([icon,t,done,desc])=>`<div class="card badge-card"><span class="badge ${done?'earned':''}">${icon}</span><h3>${t}</h3><p>${done?'Получено!':desc}</p></div>`).join('')}</div><div class="section-head"><h2>Повторим ещё раз?</h2></div><div class="card"><p>${mistakes.length?mistakes.map(w=>escape(w.en)).join(' · '):'Пока нет слов для повторения после ошибок.'}</p><div class="row"><button class="button secondary repeat-mistakes" ${mistakes.length?'':'disabled'}>Потренировать эти слова</button><button class="button secondary repeat-exercises" ${mistakesToReview().length?'':'disabled'}>Повторить задания</button></div></div><div class="exercise-review"></div><div class="section-head"><h2>Исторические игры</h2></div>${historyResultList()}<div class="section-head"><h2>История испытаний</h2></div><div class="result-list">${unitResults.length?unitResults.slice().reverse().slice(0,10).map(c=>`<div class="result-row"><span>${new Date(c.date).toLocaleString('ru-RU')}</span><b>${c.score} / ${c.total} · ${Math.round(c.score/c.total*100)}%</b></div>`).join(''):'<p class="muted">Здесь появятся завершённые испытания.</p>'}</div><p class="note">Прогресс хранится в этом браузере на этом устройстве. Очистка данных браузера удалит результаты; синхронизация между устройствами пока не подключена.</p>${state.teacher?'<div class="teacher-box"><h3>Заметки преподавателя</h3><label class="input-label">Наблюдения и следующий шаг<textarea class="teacher-notes"></textarea></label><div class="row"><button class="button secondary export-progress">Скачать отчёт</button><button class="button danger reset-progress">Сбросить результаты</button></div></div>':''}`;
+ root.innerHTML=heading('Look how far you’ve come','Маленькие шаги тоже считаются. Здесь — выполненные задания и реальные достижения.')+`<section class="card lilac mission-progress"><h2 lang="en">The Missing Vase</h2>
+ <p>${progress.drafts[vaseMissionKey]?.finished?'Дело раскрыто!':'Разгадай загадку и расскажи королю, что произошло.'}</p>${vaseMissionEntry()}</section>
+ <div class="grid three">${stats.map(([t,n,d])=>`<div class="card"><span class="section-label">${t}</span><div class="stat">${n}<span class="muted" style="font-size:20px"> / ${d}</span></div><progress max="${d||1}" value="${n}"></progress><p class="note">Освоенные задания</p></div>`).join('')}</div><div class="section-head"><h2>Your little victories</h2></div><div class="grid three">${badges().map(([icon,t,done,desc])=>`<div class="card badge-card"><span class="badge ${done?'earned':''}">${icon}</span><h3>${t}</h3><p>${done?'Получено!':desc}</p></div>`).join('')}</div><div class="section-head"><h2>Повторим ещё раз?</h2></div><div class="card"><p>${mistakes.length?mistakes.map(w=>escape(w.en)).join(' · '):'Пока нет слов для повторения после ошибок.'}</p><div class="row"><button class="button secondary repeat-mistakes" ${mistakes.length?'':'disabled'}>Потренировать эти слова</button><button class="button secondary repeat-exercises" ${mistakesToReview().length?'':'disabled'}>Повторить задания</button></div></div><div class="exercise-review"></div><div class="section-head"><h2>Исторические игры</h2></div>${historyResultList()}<div class="section-head"><h2>История испытаний</h2></div><div class="result-list">${unitResults.length?unitResults.slice().reverse().slice(0,10).map(c=>`<div class="result-row"><span>${new Date(c.date).toLocaleString('ru-RU')}</span><b>${c.score} / ${c.total} · ${Math.round(c.score/c.total*100)}%</b></div>`).join(''):'<p class="muted">Здесь появятся завершённые испытания.</p>'}</div><p class="note">Прогресс хранится в этом браузере на этом устройстве. Очистка данных браузера удалит результаты; синхронизация между устройствами пока не подключена.</p>${state.teacher?'<div class="teacher-box"><h3>Заметки преподавателя</h3><label class="input-label">Наблюдения и следующий шаг<textarea class="teacher-notes"></textarea></label><div class="row"><button class="button secondary export-progress">Скачать отчёт</button><button class="button danger reset-progress">Сбросить результаты</button></div></div>':''}`;
  $('.repeat-exercises',root).onclick=()=>quizBank($('.exercise-review',root),mistakesToReview(),{title:'Повторение'});
  $('.repeat-mistakes',root).onclick=()=>renderGame(root,'missing',()=>progressView(root),{reviewOnly:true});if(state.teacher){$('.teacher-notes',root).value=progress.notes;$('.teacher-notes',root).oninput=e=>{progress.notes=e.target.value;save()};$('.export-progress',root).onclick=()=>download('english-unit4-progress.json',JSON.stringify(progress,null,2),'application/json');$('.reset-progress',root).onclick=()=>{if(confirm('Удалить результаты, черновики и заметки Unit 4 из этого браузера?')){resetUnit4Progress();progressView(root);toast('Результаты сброшены.')}}}
 }

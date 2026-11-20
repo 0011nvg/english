@@ -1,6 +1,6 @@
 import {vocabulary,grammar,gameModes,processSteps} from './data/unit4.js?v=4';
 import {processStepsRu} from './data/unit4-support.js?v=4';
-import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,teacherTranslation,toast} from './core.js?v=4';
+import {$,$$,escape,shuffle,normal,state,progress,attempt,renderQuestion,speech,teacherTranslation,toast} from './core.js?v=5';
 let timer=null,delayed=null;
 export function stopGame(){clearInterval(timer);clearTimeout(delayed);timer=null}
 export const vocabularyModes=[

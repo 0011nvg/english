@@ -1,4 +1,4 @@
-import {$, $$, escape, progress, renderQuestion, save, shuffle, state, teacherTranslation} from './core.js?v=4';
+import {$, $$, escape, progress, renderQuestion, save, shuffle, state, teacherTranslation} from './core.js?v=5';
 import {historyGames, historySources, knightScenes, workshopArt} from './data/history.js?v=4';
 import {gameTranslations, roundTranslations} from './data/history-translations.js';
 
@@ -7,13 +7,14 @@ const art = (name, cls = '') =>
 const menu = '<a class="button secondary" href="#4/games">Все игры</a>';
 let selectedScene;
 
-export function historyCards() {
+export function historyCards({ids,includeWarmup=false}){
   return `<div class="grid three history-grid">
-    <a class="card game-card history-card" href="#4/warmup"><span class="game-icon" aria-hidden="true">🛡️</span>
-      <h3 lang="en">A Knight in the Workshop</h3><p>Выбери сцену, найди предмет и придумай, что случилось дальше.</p></a>
-    ${historyGames.map(game => `<a class="card game-card history-card" href="#4/games/${game.id}">
+    ${includeWarmup?`<a class="card game-card history-card" href="#4/warmup"><span class="game-icon" aria-hidden="true">🛡️</span>
+      <h3 lang="en">A Knight in the Workshop</h3><p>Выбери сцену, найди предмет и придумай, что случилось дальше.</p></a>`:''}
+    ${ids.map(id=>historyGames.find(game=>game.id===id)).map(game=>`<a class="card game-card history-card" href="#4/games/${game.id}">
       <span class="game-icon" aria-hidden="true">${game.icon}</span><h3 lang="en">${escape(game.title)}</h3>
-      ${state.teacher?`<small>${escape(gameTranslations[game.id].title)}</small>`:''}<p>${escape(game.desc)}</p></a>`).join('')}
+      ${state.teacher?`<small>${escape(gameTranslations[game.id].title)}</small>`:''}<p>${escape(game.desc)}</p>
+      <small>Раундов: ${game.rounds.length}</small></a>`).join('')}
   </div>`;
 }
 

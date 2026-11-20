@@ -1,6 +1,7 @@
 import {questionTranslations,optionTranslations} from './data/unit4-support.js?v=4';
 import {vocabulary,grammar,readings,practice} from './data/unit4.js?v=4';
 import {listeningQuestions} from './data/audio.js';
+import {vaseMissionKey} from './data/vase-mission.js';
 export const $=(s,root=document)=>root.querySelector(s);
 export const $$=(s,root=document)=>[...root.querySelectorAll(s)];
 export const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -19,7 +20,7 @@ export function mastered(prefix){return Object.entries(progress.answers).filter(
 export function resetUnit4Progress(){
  for(const id of Object.keys(progress.answers))if(/^(?:[vgrpl]\d+$|c-|extra-|history-)/.test(id))delete progress.answers[id];
  for(const id of Object.keys(progress.drafts)){
-  if(id==='craft'||id==='reflection-u4'||id.startsWith('speaking')||id.startsWith('history-'))delete progress.drafts[id];
+  if(id===vaseMissionKey||id==='craft'||id==='reflection-u4'||id.startsWith('speaking')||id.startsWith('history-'))delete progress.drafts[id];
  }
  progress.challenge=progress.challenge.filter(item=>item.unit&&item.unit!==4);
  progress.history={};
@@ -65,7 +66,7 @@ export function renderQuestion(root,q,opts={}){
   const correct=[q.answer,...(q.accept||[])].some(a=>normal(a)===normal(value));
   if(opts.record!==false&&(!checked||!opts.exam))attempt(q.id,correct);checked=true;solved=correct;
   feedback.className=`feedback ${opts.exam?'neutral':correct?'good':'bad'}`;
-  feedback.textContent=opts.exam?'Ответ сохранён. Разбор появится в конце.':correct?`Верно! ${q.explain||''}`:'Пока не получилось. Попробуй ещё раз или открой разбор.';
+  feedback.textContent=opts.exam?'Ответ сохранён. Разбор появится в конце.':correct?`Верно! ${q.explain||''}`:(q.retryHint||'Пока не получилось. Попробуй ещё раз или открой разбор.');
   if(correct&&!opts.exam){$('.review-answer',root)?.remove();root.classList.remove('good-flash');void root.offsetWidth;root.classList.add('good-flash')}
   if(opts.exam||correct)$$('button,input',box).forEach(el=>el.disabled=true);
   if(!correct&&!opts.exam&&!$('.review-answer',root)){
