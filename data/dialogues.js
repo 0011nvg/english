@@ -1,0 +1,4 @@
+// Supplied Pupil's Book p.51. Readable text accompanies tracks 36–37.
+export const playDialogue=[
+ ['Teacher','Open the curtains, please!'],['Max','Yes, Miss Carey!'],['Teacher','Today we’re going to put our scenery on the stage.'],['Child','What about our props?'],['Child','I’ve got the duck’s nest. I made it from twigs and reeds.'],['Child','And here are the eggs.'],['Max','They’re not eggs! They’re yellow tennis balls.'],['Teacher','Oh dear!'],['Child','Here are the trees.'],['Child','Who painted them pink and blue?'],['Teacher','Oh dear, oh dear!'],['Max','And here is the kind man’s house.'],['Child','It looks great!'],['Teacher','Can you open the door, Max?'],['Max','No, I can’t.'],['Child','Push! Push!'],['Max','Help! It’s falling down!'],['Child','And the trees are falling down!'],['Child','Everything’s falling down!'],['Teacher','Oh dear, oh dear, oh dear!']
+];
