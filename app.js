@@ -1,5 +1,5 @@
-import {renderVerbArena} from './verb-arena.js';
-import {renderGrammarArcade} from './grammar-arcade.js';
+import {renderVerbArena} from './verb-arena.js?v=fix2';
+import {renderGrammarArcade} from './grammar-arcade.js?v=fix2';
 import {renderTudorCase} from './tudor-case.js';
 import {workshops} from './data/grammar-workshop.js';
 import {sections,units} from './data/units.js?v=3';
