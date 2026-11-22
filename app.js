@@ -1,3 +1,4 @@
+import {renderGrammarArcade} from './grammar-arcade.js';
 import {renderTudorCase} from './tudor-case.js';
 import {workshops} from './data/grammar-workshop.js';
 import {sections,units} from './data/units.js?v=3';
@@ -210,10 +211,10 @@ function grammarView(root){
  ];
  blocks.unshift(...workshops);
  secrets.unshift(...workshops.map(topic=>topic.secret));
- root.innerHTML=heading('Grammar','Выбери тему: загляни в мастерскую времени, разгадай пропажу в замке или восстанови музейные подписи.')+`
+ root.innerHTML=heading('Grammar','Тренируй времена, неправильные глаголы и исключения множественного числа: расследование, игры и задания из реальной жизни.')+`
   <section class="card lilac tudor-case" tabindex="-1" aria-label="Историческое расследование"></section>
   <div class="tabs grammar-jumps" role="group" aria-label="Темы грамматики">${blocks.map((block,i)=>`<button type="button" class="tab" data-block="${i}">${block.short} · ${block.questions.length}</button>`).join('')}</div>
-  <div class="card lilac grammar-mini"><h2>Собери фразу рыцаря</h2><div class="grammar-knight"></div></div>
+  <div class="card lilac grammar-mini"><h2>Sentence Hacker · Собери фразу</h2><div class="grammar-knight"></div></div>
   ${blocks.map((block,i)=>`<section class="grammar-block" id="grammar-topic-${i}" tabindex="-1">
    <div class="card ${accents[i % accents.length]}"><h2>${block.title}</h2>${block.html}<p class="source">${block.source}</p>
    ${block.short==='Something / Anything'?teacherTranslation('Перевод примеров',['В коробке что-то есть.','Там что-нибудь есть? Я ничего не вижу.','В коробке ничего нет.','Всё на столе.']):''}
@@ -222,6 +223,7 @@ function grammarView(root){
    <ol class="grammar-exercises">${block.questions.map(q=>`<li><div class="question-stage" data-grammar-question="${q.id}"></div></li>`).join('')}</ol>
   </section>`).join('')}`;
  renderTudorCase(root.querySelector('.tudor-case'));
+ const arcade=document.createElement('section');arcade.className='grammar-arcade';root.querySelector('.grammar-mini').insertAdjacentElement('afterend',arcade);renderGrammarArcade(arcade);
  $$('[data-block]',root).forEach(button=>button.onclick=()=>{
   const block=$('#grammar-topic-'+button.dataset.block,root);
   block.focus({preventScroll:true});
