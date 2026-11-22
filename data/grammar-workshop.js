@@ -1,7 +1,7 @@
 export const workshops = [
   {
     "short": "Present или Past?",
-    "title": "Мастерская времени",
+    "title": "Time Lab · Мастерская времени",
     "html": "<p>Представь две подписи к фото гончара. <b>She makes bowls.</b> Такова её работа. <b>She made this bowl.</b> Она уже сделала именно эту миску. Даже без yesterday смысл подсказывает время.</p><div class=\"table-wrap\"><table><tr><th></th><th>Present Simple · обычно</th><th>Past Simple · тогда</th></tr><tr><th>+</th><td>I work. She works.</td><td>I worked. She worked.</td></tr><tr><th>−</th><td>She doesn’t work.</td><td>She didn’t work.</td></tr><tr><th>?</th><td>Does she work?</td><td>Did she work?</td></tr></table></div><p>Every Friday и usually часто сопровождают привычку. Yesterday, last Friday и two days ago помещают действие в прошлое. Привычка тоже может быть прошлой: <b>When he was young, he made pots every day.</b></p><p>Если описываешь, где или каким был герой, пригодится <b>be</b>: I/he/she/it was, you/we/they were. Вопрос: Was the vase heavy? Отрицание: The cups weren’t heavy.</p>",
     "secret": "Покажи вещь рядом с собой. Скажи, как обычно её используешь, а потом расскажи, что делал с ней вчера.",
     "source": "Дополнительная практика · Unit 4",
@@ -86,7 +86,7 @@ export const workshops = [
   },
   {
     "short": "Irregular verbs",
-    "title": "Бюро находок рыцарского замка",
+    "title": "Irregular Verbs Arena",
     "html": "<p>У правильных глаголов есть окончание -ed: look → looked. У неправильных форму нужно запомнить. Выбери полку и прочитай пары вслух.</p><details><summary>В мастерской</summary><p>make → made (делать) · take → took (брать) · break → broke (ломать)</p></details><details><summary>На поисках</summary><p>go → went (идти) · see → saw (видеть) · find → found (находить)</p></details><details><summary>На рынке</summary><p>buy → bought (покупать) · give → gave (давать) · bring → brought (приносить)</p></details><p><b>The knight took the cup. Did he take the cup? He didn’t take the crown.</b> В вопросе и отрицании прошлое уже показывает did, поэтому берём исходную форму take.</p>",
     "secret": "Один игрок — стражник, другой — свидетель. Спроси Did you see the crown? Ответь и добавь, что ты видел.",
     "source": "Дополнительная практика · Unit 4",
@@ -173,7 +173,7 @@ export const workshops = [
   },
   {
     "short": "Irregular plurals",
-    "title": "Музей перепутанных подписей",
+    "title": "Grammar Glitch",
     "source": "Дополнительная практика · Unit 4",
     "secret": "Разыграйте экскурсию: гид называет один экспонат или посетителя, а гость представляет целую группу. I see a child! → I see children!",
     "html": "<p>Один щит — a shield, несколько — shields. У некоторых существительных множественное число особое. Открой витрины, затем восстанови подписи.</p><details><summary>Посетители</summary><p>child → <b>children</b> · man → <b>men</b> · woman → <b>women</b> · person → <b>people</b></p></details><details><summary>Следы и находки</summary><p>mouse → <b>mice</b> · tooth → <b>teeth</b> · foot → <b>feet</b> · goose → <b>geese</b></p></details><details><summary>Форма остаётся прежней</summary><p>sheep → <b>sheep</b> · deer → <b>deer</b></p></details>",
