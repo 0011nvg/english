@@ -1,3 +1,4 @@
+import {renderVerbArena} from './verb-arena.js';
 import {renderGrammarArcade} from './grammar-arcade.js';
 import {renderTudorCase} from './tudor-case.js';
 import {workshops} from './data/grammar-workshop.js';
@@ -224,6 +225,7 @@ function grammarView(root){
   </section>`).join('')}`;
  renderTudorCase(root.querySelector('.tudor-case'));
  const arcade=document.createElement('section');arcade.className='grammar-arcade';root.querySelector('.grammar-mini').insertAdjacentElement('afterend',arcade);renderGrammarArcade(arcade);
+ const arena=document.createElement('section');arena.className='verb-arena';arcade.insertAdjacentElement('afterend',arena);renderVerbArena(arena);
  $$('[data-block]',root).forEach(button=>button.onclick=()=>{
   const block=$('#grammar-topic-'+button.dataset.block,root);
   block.focus({preventScroll:true});
