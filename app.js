@@ -1,3 +1,4 @@
+import {renderPluralSorter} from './plural-sorter.js?v=1';
 import {renderGrammarLesson} from './grammar-lesson.js?v=lesson12';
 import {renderVerbArena} from './verb-arena.js?v=lesson12';
 import {renderGrammarArcade} from './grammar-arcade.js?v=lesson12';
@@ -227,6 +228,7 @@ function grammarView(root){
  renderTudorCase(root.querySelector('.tudor-case'));
  const arcade=document.createElement('section');arcade.className='grammar-arcade';root.querySelector('.grammar-mini').insertAdjacentElement('afterend',arcade);renderGrammarArcade(arcade);
  const arena=document.createElement('section');arena.className='verb-arena';arcade.insertAdjacentElement('afterend',arena);renderVerbArena(arena);
+ const pluralStation=document.createElement('section');pluralStation.className='plural-station';arena.insertAdjacentElement('afterend',pluralStation);renderPluralSorter(pluralStation);
  const lesson=document.createElement('section');lesson.className='grammar-lesson-activities';root.append(lesson);renderGrammarLesson(lesson);
  $$('[data-block]',root).forEach(button=>button.onclick=()=>{
   const block=$('#grammar-topic-'+button.dataset.block,root);
