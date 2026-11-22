@@ -209,7 +209,7 @@ function grammarView(root){
  ];
  blocks.unshift(...workshops);
  secrets.unshift(...workshops.map(topic=>topic.secret));
- root.innerHTML=heading('Grammar','Выбери тему: загляни в мастерскую времени, разгадай пропажу в замке или озвучь музейную выставку.')+`
+ root.innerHTML=heading('Grammar','Выбери тему: загляни в мастерскую времени, разгадай пропажу в замке или восстанови музейные подписи.')+`
   <div class="tabs grammar-jumps" role="group" aria-label="Темы грамматики">${blocks.map((block,i)=>`<button type="button" class="tab" data-block="${i}">${block.short} · ${block.questions.length}</button>`).join('')}</div>
   <div class="card lilac grammar-mini"><h2>Собери фразу рыцаря</h2><div class="grammar-knight"></div></div>
   ${blocks.map((block,i)=>`<section class="grammar-block" id="grammar-topic-${i}" tabindex="-1">
@@ -224,6 +224,29 @@ function grammarView(root){
   block.focus({preventScroll:true});
   block.scrollIntoView({block:'start'});
  });
+ const museum=$('#grammar-topic-2 .card',root);
+ museum.insertAdjacentHTML('beforeend','<h3>Найди пары</h3><p>Выбери слово слева и его множественное число справа.</p><div class="row pair-columns"></div><p role="status" class="pair-status"></p><button class="button secondary replay-pairs">Новый раунд</button>');
+ const pairs=[['child','children'],['mouse','mice'],['goose','geese'],['person','people'],['foot','feet'],['tooth','teeth'],['woman','women'],['man','men']];
+ function startPairs(){
+  const area=$('.pair-columns',museum), status=$('.pair-status',museum);
+  area.replaceChildren();status.textContent='';
+  const round=shuffle(pairs).slice(0,4);
+  let selected=null, score=0;
+  for(const side of [0,1]){
+   const column=document.createElement('div');area.append(column);
+   for(const pair of shuffle([...round])){
+    const button=document.createElement('button');button.className='option';button.textContent=pair[side];column.append(button);
+    button.onclick=()=>{
+     if(side===0){selected={pair,button};status.textContent=pair[0]+' → ?';return}
+     if(!selected){status.textContent='Сначала выбери слово слева.';return}
+     if(selected.pair!==pair){status.textContent='Попробуй другую пару для '+selected.pair[0]+'.';return}
+     button.disabled=selected.button.disabled=true;selected=null;score++;
+     status.textContent=score===4?'Все четыре пары найдены!':'Верно! '+pair.join(' → ')+'.';
+    };
+   }
+  }
+ }
+ $('.replay-pairs',museum).onclick=startPairs;startPairs();
  const chunks=['When the wheel turned,','the knight','held the vase.'];
  renderQuestion($('.grammar-knight',root),{
   id:'extra-grammar-knight',type:'order',prompt:'Нажми на три части фразы в нужном порядке.',

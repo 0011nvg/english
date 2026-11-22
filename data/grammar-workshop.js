@@ -172,83 +172,163 @@ export const workshops = [
     ]
   },
   {
-    "short": "Numbers",
-    "title": "Озвучь музейную выставку",
-    "html": "<p><b>How many?</b> Считаем экспонаты: one coin, two coins, twelve coins. <b>Which one?</b> Называем место по порядку: the first coin, the second coin, the third coin. Дальше часто добавляем -th: four → fourth, six → sixth. Запомни five → fifth, twelve → twelfth, twenty → twentieth.</p><p>13 — thirteen, 30 — thirty. В числах 21–99 из двух слов ставим дефис: twenty-one. Для порядкового меняется последнее слово: twenty-first (21st).</p><p>В 1969 году люди впервые высадились на Луне. Для аудиогида год можно прочитать двумя частями: <b>nineteen sixty-nine</b>. Теперь ты озвучиваешь экспозицию о полёте.</p>",
-    "secret": "Придумай музейный билет. Назови номер зала, количество экспонатов и какой по счёту экспонат ты хочешь увидеть.",
+    "short": "Irregular plurals",
+    "title": "Музей перепутанных подписей",
     "source": "Дополнительная практика · Unit 4",
+    "secret": "Разыграйте экскурсию: гид называет один экспонат или посетителя, а гость представляет целую группу. I see a child! → I see children!",
+    "html": "<p>Один щит — a shield, несколько — shields. У некоторых существительных множественное число особое. Открой витрины, затем восстанови подписи.</p><details><summary>Посетители</summary><p>child → <b>children</b> · man → <b>men</b> · woman → <b>women</b> · person → <b>people</b></p></details><details><summary>Следы и находки</summary><p>mouse → <b>mice</b> · tooth → <b>teeth</b> · foot → <b>feet</b> · goose → <b>geese</b></p></details><details><summary>Форма остаётся прежней</summary><p>sheep → <b>sheep</b> · deer → <b>deer</b></p></details>",
     "questions": [
       {
-        "id": "g4x3-1",
-        "prompt": "В витрине 13 моделей. There are ___ models.",
-        "answer": "thirteen",
-        "explain": "13 — thirteen, а 30 — thirty.",
+        "id": "gplural0",
+        "explain": "child → children. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "child — ребёнок; форма множественного числа — children."
+        ],
         "type": "choice",
+        "prompt": "Найди пару для музейной карточки: child → …",
+        "answer": "children",
         "options": [
-          "third",
-          "thirty",
-          "thirteen"
+          "childs",
+          "children",
+          "men"
         ]
       },
       {
-        "id": "g4x3-2",
-        "prompt": "В зал пришли 30 гостей. Напиши 30 словом.",
-        "answer": "thirty",
-        "explain": "У десятка окончание -ty.",
-        "type": "input"
-      },
-      {
-        "id": "g4x3-3",
-        "prompt": "Ты у второго экспоната. This is the ___ model.",
-        "answer": "second",
-        "explain": "Место по порядку: two → second.",
-        "type": "choice",
-        "options": [
-          "two",
-          "twice",
-          "second"
-        ]
-      },
-      {
-        "id": "g4x3-4",
-        "prompt": "Укажи подпись к двенадцатому билету.",
-        "answer": "the twelfth ticket",
-        "explain": "Twelve → twelfth.",
-        "type": "choice",
-        "options": [
-          "the twelve tickets",
-          "the twelfth ticket",
-          "the twentieth ticket"
-        ]
-      },
-      {
-        "id": "g4x3-5",
-        "prompt": "Впиши словами: the 21st visitor → the ___ visitor.",
-        "answer": "twenty-first",
-        "explain": "Меняем только one → first.",
+        "id": "gplural1",
+        "explain": "man → men. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "man — мужчина; форма множественного числа — men."
+        ],
         "type": "input",
-        "accept": [
-          "twenty first"
-        ]
+        "prompt": "Исправь подпись экскурсовода: several mans. Впиши только существительное.",
+        "answer": "men"
       },
       {
-        "id": "g4x3-6",
-        "prompt": "Архивная запись: In 1969, astronauts ___ on the Moon.",
-        "answer": "landed",
-        "explain": "1969 — завершённый год. Land — правильный глагол.",
+        "id": "gplural2",
+        "explain": "woman → women. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "woman — женщина; форма множественного числа — women."
+        ],
+        "type": "order",
+        "prompt": "Собери из букв множественное число слова woman.",
+        "tokens": [
+          "w",
+          "o",
+          "m",
+          "e",
+          "n"
+        ],
+        "joiner": "",
+        "answer": "women"
+      },
+      {
+        "id": "gplural3",
+        "explain": "mouse → mice. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "mouse — мышь; форма множественного числа — mice."
+        ],
         "type": "choice",
+        "prompt": "Найди пару для музейной карточки: mouse → …",
+        "answer": "mice",
         "options": [
-          "land",
-          "lands",
-          "landed"
+          "mouses",
+          "mice",
+          "teeth"
         ]
       },
       {
-        "id": "g4x3-7",
-        "prompt": "Собери подпись к первому снимку в твоём альбоме.",
-        "answer": "Yesterday I took my first photo.",
-        "explain": "Took — прошлое от take, first — порядковое числительное.",
-        "type": "order"
+        "id": "gplural4",
+        "explain": "tooth → teeth. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "tooth — зуб; форма множественного числа — teeth."
+        ],
+        "type": "input",
+        "prompt": "Исправь подпись экскурсовода: several tooths. Впиши только существительное.",
+        "answer": "teeth"
+      },
+      {
+        "id": "gplural5",
+        "explain": "foot → feet. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "foot — ступня; форма множественного числа — feet."
+        ],
+        "type": "order",
+        "prompt": "Собери из букв множественное число слова foot.",
+        "tokens": [
+          "f",
+          "e",
+          "e",
+          "t"
+        ],
+        "joiner": "",
+        "answer": "feet"
+      },
+      {
+        "id": "gplural6",
+        "explain": "goose → geese. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "goose — гусь; форма множественного числа — geese."
+        ],
+        "type": "choice",
+        "prompt": "Найди пару для музейной карточки: goose → …",
+        "answer": "geese",
+        "options": [
+          "gooses",
+          "geese",
+          "sheep"
+        ]
+      },
+      {
+        "id": "gplural7",
+        "explain": "sheep → sheep. Форма одинакова в обоих числах.",
+        "teacherRu": [
+          "sheep — овца; форма множественного числа — sheep."
+        ],
+        "type": "input",
+        "prompt": "Исправь подпись экскурсовода: several sheeps. Впиши только существительное.",
+        "answer": "sheep"
+      },
+      {
+        "id": "gplural8",
+        "explain": "deer → deer. Форма одинакова в обоих числах.",
+        "teacherRu": [
+          "deer — олень; форма множественного числа — deer."
+        ],
+        "type": "order",
+        "prompt": "Собери из букв множественное число слова deer.",
+        "tokens": [
+          "d",
+          "e",
+          "e",
+          "r"
+        ],
+        "joiner": "",
+        "answer": "deer"
+      },
+      {
+        "id": "gplural9",
+        "explain": "person → people. Эту пару запоминаем целиком.",
+        "teacherRu": [
+          "person — человек; форма множественного числа — people."
+        ],
+        "type": "choice",
+        "prompt": "Найди пару для музейной карточки: person → …",
+        "answer": "people",
+        "options": [
+          "persons",
+          "people",
+          "children"
+        ]
+      },
+      {
+        "id": "gplural10",
+        "type": "order",
+        "prompt": "Собери сообщение смотрителя: «Дети увидели мышей».",
+        "answer": "The children saw the mice.",
+        "explain": "Child → children, mouse → mice. Saw показывает, что встреча уже произошла.",
+        "teacherRu": [
+          "Дети увидели мышей."
+        ]
       }
     ]
   }
