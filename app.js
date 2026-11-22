@@ -1,3 +1,4 @@
+import {renderTudorCase} from './tudor-case.js';
 import {workshops} from './data/grammar-workshop.js';
 import {sections,units} from './data/units.js?v=3';
 import {vocabulary,grammar,readings,practice,speaking,gameModes,teacherGuide,processSteps,coilSteps} from './data/unit4.js?v=4';
@@ -210,6 +211,7 @@ function grammarView(root){
  blocks.unshift(...workshops);
  secrets.unshift(...workshops.map(topic=>topic.secret));
  root.innerHTML=heading('Grammar','Выбери тему: загляни в мастерскую времени, разгадай пропажу в замке или восстанови музейные подписи.')+`
+  <section class="card lilac tudor-case" tabindex="-1" aria-label="Историческое расследование"></section>
   <div class="tabs grammar-jumps" role="group" aria-label="Темы грамматики">${blocks.map((block,i)=>`<button type="button" class="tab" data-block="${i}">${block.short} · ${block.questions.length}</button>`).join('')}</div>
   <div class="card lilac grammar-mini"><h2>Собери фразу рыцаря</h2><div class="grammar-knight"></div></div>
   ${blocks.map((block,i)=>`<section class="grammar-block" id="grammar-topic-${i}" tabindex="-1">
@@ -219,6 +221,7 @@ function grammarView(root){
    ${secretMarkup(secrets[i])}
    <ol class="grammar-exercises">${block.questions.map(q=>`<li><div class="question-stage" data-grammar-question="${q.id}"></div></li>`).join('')}</ol>
   </section>`).join('')}`;
+ renderTudorCase(root.querySelector('.tudor-case'));
  $$('[data-block]',root).forEach(button=>button.onclick=()=>{
   const block=$('#grammar-topic-'+button.dataset.block,root);
   block.focus({preventScroll:true});

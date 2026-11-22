@@ -521,3 +521,10 @@ button,input,textarea,select,a {overflow-wrap:anywhere}
  .vase-layout {grid-template-columns:1fr}
  .vase-mission-art {aspect-ratio:16/9;object-fit:cover}
 }
+
+.tudor-case .tudor-head {display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.tudor-scene {display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:1.4rem;align-items:center;margin:1rem 0}
+.tudor-scene figure {margin:0;background:#242148;color:white;border-radius:16px;overflow:hidden}
+.tudor-scene img {display:block;width:100%;max-height:180px;object-fit:cover}
+.tudor-scene figcaption {padding:.7rem;text-align:center;font-weight:700}
+@media(max-width:540px){.tudor-scene{grid-template-columns:1fr}.tudor-scene figure{max-width:230px}}
