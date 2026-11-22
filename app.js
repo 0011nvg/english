@@ -252,12 +252,19 @@ function grammarView(root){
   }
  }
  $('.replay-pairs',museum).onclick=startPairs;startPairs();
- const chunks=['When the wheel turned,','the knight','held the vase.'];
- renderQuestion($('.grammar-knight',root),{
-  id:'extra-grammar-knight',type:'order',prompt:'Нажми на три части фразы в нужном порядке.',
-  tokens:chunks,answer:chunks.join(' '),explain:'После части с When ставим запятую. Turn → turned, hold → held.',
-  teacherRu:['When the wheel turned, the knight held the vase. — Когда круг завертелся, рыцарь придержал вазу.']
- },{label:'Grammar',record:false});
+ const hacker=[
+  {tokens:['I usually','play football','after school.'],answer:'I usually play football after school.',tense:'Present Simple',why:'Usually — привычка.'},
+  {tokens:['Yesterday','we watched','a funny video.'],answer:'Yesterday we watched a funny video.',tense:'Past Simple',why:'Yesterday — завершённое действие.'},
+  {tokens:['My friend','bought','a new game last week.'],answer:'My friend bought a new game last week.',tense:'Past Simple',why:'Bought — неправильная форма buy.'},
+  {tokens:['The museum','opens','at nine every day.'],answer:'The museum opens at nine every day.',tense:'Present Simple',why:'Every day — расписание.'},
+  {tokens:['The explorers','found','an old map.'],answer:'The explorers found an old map.',tense:'Past Simple',why:'Found — неправильная форма find.'}
+ ];
+ let hackerIndex=0;
+ function nextHacker(){const h=hacker[hackerIndex];const area=$('.grammar-knight',root);area.innerHTML='<p class="source">MISSION '+(hackerIndex+1)+' / '+hacker.length+'</p><p>Собери предложение, затем определи грамматическое время.</p><div class="hacker-question"></div><div class="hacker-tense" hidden><p>Какое время использовано?</p><div class="row"><button type="button" class="button secondary" data-tense="Present Simple">Present Simple</button><button type="button" class="button secondary" data-tense="Past Simple">Past Simple</button></div><p class="hacker-feedback" role="status"></p></div>';
+ renderQuestion(area.querySelector('.hacker-question'),{id:'hacker-'+hackerIndex,type:'order',prompt:'Восстанови порядок слов.',tokens:h.tokens,answer:h.answer,explain:'Отлично! Теперь определи время.'},{label:'Sentence Hacker',record:false,onAnswer:correct=>{if(correct)area.querySelector('.hacker-tense').hidden=false}});
+ area.querySelectorAll('[data-tense]').forEach(b=>b.onclick=()=>{const ok=b.dataset.tense===h.tense;area.querySelector('.hacker-feedback').textContent=ok?'Верно! '+h.why:'Попробуй ещё: обрати внимание на форму глагола и обстоятельство времени.';if(ok){area.querySelectorAll('[data-tense]').forEach(x=>x.disabled=true);const next=document.createElement('button');next.type='button';next.className='button';next.textContent=hackerIndex===hacker.length-1?'Повторить миссии':'Следующая миссия →';next.onclick=()=>{hackerIndex=(hackerIndex+1)%hacker.length;nextHacker()};area.append(next)}});
+ }
+ nextHacker();
  grammar.forEach(q=>renderQuestion($(`[data-grammar-question="${q.id}"]`,root),q,{label:'Grammar'}));
 }
 
