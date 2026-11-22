@@ -1,3 +1,4 @@
+import {workshops} from './data/grammar-workshop.js';
 import {sections,units} from './data/units.js?v=3';
 import {vocabulary,grammar,readings,practice,speaking,gameModes,teacherGuide,processSteps,coilSteps} from './data/unit4.js?v=4';
 import {readingBasics,readingTerms,readingTranslations,playTranslations,stageRoles,audioSupport,speakingSupport,speakingExtras,unitGoals,readingMissions,coilStepsRu,processStepsRu,audioTitlesRu} from './data/unit4-support.js?v=4';
@@ -138,7 +139,7 @@ function learnView(root){
 }
 function vocabularyView(root){
  root.innerHTML=heading('Vocabulary','Выучи слова о ремёслах и потренируйся в четырёх играх.')+`
-  <div class="lexi-modes" role="group" aria-label="Словарные игры">${vocabularyModes.map(([id,title,description,icon],i)=>`<button class="card mode-card ${accents[i]}" type="button" data-vocab-game="${id}" aria-pressed="false">
+  <div class="lexi-modes" role="group" aria-label="Словарные игры">${vocabularyModes.map(([id,title,description,icon],i)=>`<button class="card mode-card ${accents[i % accents.length]}" type="button" data-vocab-game="${id}" aria-pressed="false">
    <span class="mode-icon" aria-hidden="true">${icon}</span><strong>${title}</strong><small>${description}</small>
   </button>`).join('')}</div>
   <div class="tabs vocab-tabs" role="group" aria-label="Просмотр слов">
@@ -199,20 +200,22 @@ function grammarView(root){
  const blocks=[
   {questions:grammar.slice(0,10),short:'When + Past Simple',source:'Pupil’s Book, стр. 52 · Grammar Practice Book, стр. 17',title:'When: одно событие, затем другое',html:'<p><b>When</b> значит «когда». В этом юните связываем два события в прошлом: произошло одно — затем другое.</p><div class="phonics"><b>When</b> the rain <mark>stopped</mark>, the children <mark>went</mark> outside.</div><p>Когда дождь закончился, дети вышли на улицу. В обеих частях — <b>Past Simple</b>. После части с When в начале предложения ставим запятую.</p><p class="small">Нужные формы: go → went · see → saw · buy → bought · run → ran · fall → fell.</p>'},
   {questions:grammar.slice(10,20),short:'Something / Anything',source:'Pupil’s Book, стр. 53 · Grammar Practice Book, стр. 18',title:'Что-то, что-нибудь, ничего, всё',html:'<div class="table-wrap"><table><thead><tr><th>Слово</th><th>Когда нужно</th><th>Пример</th></tr></thead><tbody><tr><td>something</td><td>что-то есть</td><td>There is something in the box.</td></tr><tr><td>anything</td><td>вопрос или отрицание</td><td>Is there anything? I can’t see anything.</td></tr><tr><td>nothing</td><td>ничего нет</td><td>There is nothing in the box.</td></tr><tr><td>everything</td><td>всё</td><td>Everything is on the desk.</td></tr></tbody></table></div><p>Не делаем двойное отрицание: <b>I can’t see anything.</b> Или: <b>I can see nothing.</b></p>'},
-  {questions:grammar.slice(20),short:'Knife → knives',source:'Grammar Practice Book, стр. 19',title:'Knife → knives',html:'<p>У этих слов во множественном числе <b>-f / -fe</b> меняется на <b>-ves</b>. Это группа слов, а не правило для всех слов на -f.</p><div class="phonics">knife → <mark>knives</mark> · leaf → <mark>leaves</mark></div><p>shelf → shelves · wolf → wolves · thief → thieves · half → halves</p>'}
+  {questions:grammar.slice(20,26),short:'Knife → knives',source:'Grammar Practice Book, стр. 19',title:'Knife → knives',html:'<p>У этих слов во множественном числе <b>-f / -fe</b> меняется на <b>-ves</b>. Это группа слов, а не правило для всех слов на -f.</p><div class="phonics">knife → <mark>knives</mark> · leaf → <mark>leaves</mark></div><p>shelf → shelves · wolf → wolves · thief → thieves · half → halves</p>'}
  ];
  const secrets=[
   'После when попробуй подставить «когда». Скажи два коротких события: the king opened the door, the cat ran away. Теперь свяжи их: When the king opened the door, the cat ran away.',
   'Представь коробку. Видишь там что-то — something. Спрашиваешь, есть ли что-нибудь, — anything. Пусто — nothing. Всё на месте — everything.',
   'Обведи в каждой паре то, что меняется: kni(fe) → kni(ves), lea(f) → lea(ves). Прочитай пары вслух и послушай, как /f/ меняется на /v/.'
  ];
- root.innerHTML=heading('Grammar','Разбери три правила Unit 4. Все задания открыты: можно идти по порядку или выбрать нужную тему.')+`
+ blocks.unshift(...workshops);
+ secrets.unshift(...workshops.map(topic=>topic.secret));
+ root.innerHTML=heading('Grammar','Выбери тему: загляни в мастерскую времени, разгадай пропажу в замке или озвучь музейную выставку.')+`
   <div class="tabs grammar-jumps" role="group" aria-label="Темы грамматики">${blocks.map((block,i)=>`<button type="button" class="tab" data-block="${i}">${block.short} · ${block.questions.length}</button>`).join('')}</div>
   <div class="card lilac grammar-mini"><h2>Собери фразу рыцаря</h2><div class="grammar-knight"></div></div>
   ${blocks.map((block,i)=>`<section class="grammar-block" id="grammar-topic-${i}" tabindex="-1">
-   <div class="card ${accents[i]}"><h2>${block.title}</h2>${block.html}<p class="source">${block.source}</p>
-   ${i===1?teacherTranslation('Перевод примеров',['В коробке что-то есть.','Там что-нибудь есть? Я ничего не вижу.','В коробке ничего нет.','Всё на столе.']):''}
-   ${i===2?teacherTranslation('Перевод слов',['knife — нож, leaf — лист, shelf — полка, wolf — волк, thief — вор, half — половина.']):''}</div>
+   <div class="card ${accents[i % accents.length]}"><h2>${block.title}</h2>${block.html}<p class="source">${block.source}</p>
+   ${block.short==='Something / Anything'?teacherTranslation('Перевод примеров',['В коробке что-то есть.','Там что-нибудь есть? Я ничего не вижу.','В коробке ничего нет.','Всё на столе.']):''}
+   ${block.short==='Knife → knives'?teacherTranslation('Перевод слов',['knife — нож, leaf — лист, shelf — полка, wolf — волк, thief — вор, half — половина.']):''}</div>
    ${secretMarkup(secrets[i])}
    <ol class="grammar-exercises">${block.questions.map(q=>`<li><div class="question-stage" data-grammar-question="${q.id}"></div></li>`).join('')}</ol>
   </section>`).join('')}`;

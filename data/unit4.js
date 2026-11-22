@@ -1,3 +1,4 @@
+import {workshops} from './grammar-workshop.js';
 import {wordSupport} from './unit4-support.js?v=4';
 
 // Sources: Pupil's Book pp.48–55; Dictionary pp.7–9; Grammar Practice pp.17–19.
@@ -28,7 +29,8 @@ export const grammar=[
  q('g18','Сделай отрицание: There is something in the box.','There is not anything in the box',null,'There is not anything = There is nothing.','input',{accept:["There isn't anything in the box",'There is nothing in the box',"There's nothing in the box"]}),
  q('g19','Сделай вопрос: There is something on the desk.','Is there anything on the desk',null,'Для нейтрального вопроса меняем something на anything.','input'),
  q('g20','Исправь: I cannot see nothing.','I cannot see anything',null,'Убираем двойное отрицание.','input',{accept:["I can't see anything",'I can see nothing']}),
- q('g21','Один нож — много … knife →','knives',null,'-fe меняется на -ves.','input'),q('g22','Один лист — много … leaf →','leaves',null,'leaf → leaves.','input'),q('g23','Одна полка — много … shelf →','shelves',null,'shelf → shelves.','input'),q('g24','Один волк — много … wolf →','wolves',null,'wolf → wolves.','input'),q('g25','Один вор — много … thief →','thieves',null,'thief → thieves.','input'),q('g26','Одна половина — две … half →','halves',null,'half → halves.','input')
+ q('g21','Один нож — много … knife →','knives',null,'-fe меняется на -ves.','input'),q('g22','Один лист — много … leaf →','leaves',null,'leaf → leaves.','input'),q('g23','Одна полка — много … shelf →','shelves',null,'shelf → shelves.','input'),q('g24','Один волк — много … wolf →','wolves',null,'wolf → wolves.','input'),q('g25','Один вор — много … thief →','thieves',null,'thief → thieves.','input'),q('g26','Одна половина — две … half →','halves',null,'half → halves.','input'),
+ ...workshops.flatMap(topic=>topic.questions)
 ];
 export const readings=[
  {id:'pots',title:'Pots',image:'pots',source:'Pupil’s Book, p.48',text:[
